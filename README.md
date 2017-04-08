@@ -22,7 +22,7 @@ GTIN.isGTIN("12345678901234")
 GTIN.isGTIN14("12345678901234")
 GTIN.isValid("12345678")  // checks both format and check digit
 GTIN.validateFormat("12345678") // throws exception if format is invalid
-GTIN.validateFormatAndCheckDigit("12345678") // throws exception if format is not valid or the check digit is incorrect
+GTIN.validateFormatAndCheckDigit("12345678") // throws exception if format or check digit invalid
 ```
 
 ```java
