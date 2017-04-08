@@ -19,7 +19,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class UtilsTests {
+public class InternalsTests {
 
     @Test
     public void testStartsWithNZeroes() {
