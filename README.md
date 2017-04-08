@@ -64,7 +64,7 @@ GLNs are 13 digit long numbers used to identify a specific physical or logical l
 GLN.isGLN("7594567000014")
 GLN.isValid("7594567000014")
 GLN.validateFormat("7594567000014") // throws exception if format is not valid
-GLN.validateFormatAndCheckDigit("7594567000014") // throws exception if format is not valid or the check digit is incorrect
+GLN.validateFormatAndCheckDigit("7594567000014") // throws exception if format or check digit invalid
 ```
 
 ## Serial Shipping Container Code (SSCC)
@@ -75,7 +75,7 @@ SSCCs are 18 digit numbers used to identify logistics units.
 SSCC.isSSCC("106141411234567897")
 SSCC.isValid("106141411234567897")
 SSCC.validateFormat("106141411234567897") // throws exception if format is not valid
-SSCC.validateFormatAndCheckDigit("106141411234567897") // throws exception if format is not valid or the check digit is incorrect
+SSCC.validateFormatAndCheckDigit("106141411234567897") // throws exception if format or check digit invalid
 ```
 
 ## Check digits
