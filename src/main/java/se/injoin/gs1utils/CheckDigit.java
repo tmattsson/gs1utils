@@ -116,6 +116,6 @@ public final class CheckDigit {
             int n = s.charAt(i) - '0';
             sum += n + (n + n) * (position & 1);
         }
-        return (char) ('0' + (10 - (sum % 10)));
+        return (char) ('0' + ((10 - (sum % 10)) % 10));
     }
 }

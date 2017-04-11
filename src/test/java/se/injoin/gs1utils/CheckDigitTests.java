@@ -64,6 +64,7 @@ public class CheckDigitTests {
             assertEquals("Invalid sequence, must be digits", e.getMessage());
         }
         assertEquals('1', CheckDigit.calculate("400638133393"));
+        assertEquals('0', CheckDigit.calculate("200739410000"));
     }
 
     @Test
