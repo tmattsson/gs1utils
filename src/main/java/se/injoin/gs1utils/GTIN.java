@@ -280,7 +280,8 @@ public final class GTIN {
 
     /**
      * Returns the normal form for a GTIN by shortening it to its shortest possible length and if it is a weight item
-     * normalizes it by removing the weight or price. Does not validate or recalculate the check digit.
+     * normalizes it by removing the weight or price. Does not validate the check digit and only recalculates it if it
+     * is a weight item.
      */
     public static String normalize(String gtin) {
         if (gtin == null) {
