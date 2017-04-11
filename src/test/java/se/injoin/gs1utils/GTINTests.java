@@ -414,31 +414,31 @@ public class GTINTests {
     }
 
     @Test
-    public void testCanonicalizeWeightItem() {
+    public void testNormalizeWeightItem() {
         try {
-            GTIN.canonicalizeWeightItem(null);
+            GTIN.normalizeWeightItem(null);
             fail();
         } catch (NullPointerException ignored) {
         }
         try {
-            GTIN.canonicalizeWeightItem("ABCD");
+            GTIN.normalizeWeightItem("ABCD");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN ABCD, must be digits", e.getMessage());
         }
         try {
-            GTIN.canonicalizeWeightItem("1234");
+            GTIN.normalizeWeightItem("1234");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN 1234, must be 13 or 14 digits long", e.getMessage());
         }
         try {
-            GTIN.canonicalizeWeightItem("12334567890123");
+            GTIN.normalizeWeightItem("12334567890123");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("GTIN 12334567890123 is not a weight item", e.getMessage());
         }
-        assertEquals("02388060100006", GTIN.canonicalizeWeightItem("02388060112344"));
-        assertEquals("2388060100006", GTIN.canonicalizeWeightItem("2388060112344"));
+        assertEquals("02388060100006", GTIN.normalizeWeightItem("02388060112344"));
+        assertEquals("2388060100006", GTIN.normalizeWeightItem("2388060112344"));
     }
 }

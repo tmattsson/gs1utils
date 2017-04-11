@@ -279,16 +279,16 @@ public final class GTIN {
     }
 
     /**
-     * Returns the canonical form for a GTIN by shortening it to its shortest possible length and if it is a weight item
-     * canonicalizes it by removing the weight or price. Does not validate or recalculate the check digit.
+     * Returns the normal form for a GTIN by shortening it to its shortest possible length and if it is a weight item
+     * normalizes it by removing the weight or price. Does not validate or recalculate the check digit.
      */
-    public static String canonicalize(String gtin) {
+    public static String normalize(String gtin) {
         if (gtin == null) {
             return null;
         }
         validateFormat(gtin);
         if (isWeightItem(gtin)) {
-            gtin = canonicalizeWeightItem(gtin);
+            gtin = normalizeWeightItem(gtin);
         }
         return shorten(gtin);
     }
@@ -371,7 +371,7 @@ public final class GTIN {
      * @throws NullPointerException     if the GTIN is null
      * @throws IllegalArgumentException if the GTIN is null or not a variable weight GTIN
      */
-    public static String canonicalizeWeightItem(String gtin) {
+    public static String normalizeWeightItem(String gtin) {
         validateFormat13or14(gtin);
         if (isWeightItem(gtin)) {
             if (gtin.length() == 13) {

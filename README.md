@@ -12,8 +12,8 @@ GTINs come in 4 lengths, GTIN-14, GTIN-13, GTIN-12 and GTIN-8, also known as UPC
 * Verification of either format or format and check digit.
 * Identification of GTINs that are ISBN, ISSN, ISMN.
 * Identification and value extraction from GS1 Sweden weight item GTINs.
-* Canonicalization of GS1 Sweden weight item GTINs to their representative form without weight/price.
-* Canonicalization of GTINs to their shortest canonical form.
+* Normalization of GS1 Sweden weight item GTINs to their representative form without weight/price.
+* Normalization of GTINs to their shortest representative form.
 
 ```java
 // Identification and validation
@@ -36,7 +36,7 @@ GTIN.canBecomeGTIN13("12345678")
 GTIN.canBecomeGTIN12("12345678")
 GTIN.canBecomeGTIN8("12345678")
 GTIN.shorten("000012345678") // returns "12345678"
-GTIN.canonicalize("000012345678") // returns "12345678"
+GTIN.normalize("000012345678") // returns "12345678"
 ```
 
 ```java
@@ -46,7 +46,7 @@ GTIN.isWeightItemWithPrice("2088060112344")
 GTIN.isWeightItemWithWeight("2388060112344")
 GTIN.getPriceFromWeightItem("02188060112344") // returns 123.40
 GTIN.getWeightFromWeightItem("02388060112344") // returns 1234
-GTIN.canonicalizeWeightItem("2388060112344") // returns "2388060100006"
+GTIN.normalizeWeightItem("2388060112344") // returns "2388060100006"
 ```
 
 ```java
