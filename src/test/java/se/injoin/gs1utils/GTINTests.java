@@ -354,63 +354,63 @@ public class GTINTests {
     }
 
     @Test
-    public void testGetPriceFromPriceItem() {
+    public void testGetPriceFromWeightItem() {
         try {
-            GTIN.getPriceFromWeightItem(null);
+            GTIN.extractPriceFromWeightItem(null);
             fail();
         } catch (NullPointerException ignored) {
         }
         try {
-            GTIN.getPriceFromWeightItem("ABCD");
+            GTIN.extractPriceFromWeightItem("ABCD");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN ABCD, must be digits", e.getMessage());
         }
         try {
-            GTIN.getPriceFromWeightItem("1234");
+            GTIN.extractPriceFromWeightItem("1234");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN 1234, must be 13 or 14 digits long", e.getMessage());
         }
         try {
-            GTIN.getPriceFromWeightItem("12334567890123");
+            GTIN.extractPriceFromWeightItem("12334567890123");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("GTIN 12334567890123 is not a weight item with price", e.getMessage());
         }
-        assertEquals(new BigDecimal("12.34"), GTIN.getPriceFromWeightItem("02088060112344"));
-        assertEquals(new BigDecimal("123.40"), GTIN.getPriceFromWeightItem("02188060112344"));
-        assertEquals(new BigDecimal("1234.00"), GTIN.getPriceFromWeightItem("02288060112344"));
+        assertEquals(new BigDecimal("12.34"), GTIN.extractPriceFromWeightItem("02088060112344"));
+        assertEquals(new BigDecimal("123.40"), GTIN.extractPriceFromWeightItem("02188060112344"));
+        assertEquals(new BigDecimal("1234.00"), GTIN.extractPriceFromWeightItem("02288060112344"));
     }
 
     @Test
-    public void testGetWeightFromWeightItem() {
+    public void testExtractWeightFromWeightItem() {
         try {
-            GTIN.getWeightFromWeightItem(null);
+            GTIN.extractWeightFromWeightItem(null);
             fail();
         } catch (NullPointerException ignored) {
         }
         try {
-            GTIN.getWeightFromWeightItem("ABCD");
+            GTIN.extractWeightFromWeightItem("ABCD");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN ABCD, must be digits", e.getMessage());
         }
         try {
-            GTIN.getWeightFromWeightItem("1234");
+            GTIN.extractWeightFromWeightItem("1234");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN 1234, must be 13 or 14 digits long", e.getMessage());
         }
         try {
-            GTIN.getWeightFromWeightItem("12334567890123");
+            GTIN.extractWeightFromWeightItem("12334567890123");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("GTIN 12334567890123 is not a weight item with weight", e.getMessage());
         }
-        assertEquals(1234, GTIN.getWeightFromWeightItem("02388060112344"));
-        assertEquals(12340, GTIN.getWeightFromWeightItem("02488060112344"));
-        assertEquals(123400, GTIN.getWeightFromWeightItem("02588060112344"));
+        assertEquals(1234, GTIN.extractWeightFromWeightItem("02388060112344"));
+        assertEquals(12340, GTIN.extractWeightFromWeightItem("02488060112344"));
+        assertEquals(123400, GTIN.extractWeightFromWeightItem("02588060112344"));
     }
 
     @Test

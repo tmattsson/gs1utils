@@ -326,7 +326,7 @@ public final class GTIN {
      * @throws NullPointerException     if the GTIN is null
      * @throws IllegalArgumentException if the GTIN is null or not a variable weight GTIN with price
      */
-    public static BigDecimal getPriceFromWeightItem(String gtin) {
+    public static BigDecimal extractPriceFromWeightItem(String gtin) {
         validateFormat13or14(gtin);
         String s = getVariableWeightGTIN13(gtin);
         if (s == null || !(s.charAt(1) >= '0' && s.charAt(1) <= '2')) {
@@ -348,7 +348,7 @@ public final class GTIN {
      * @throws NullPointerException     if the GTIN is null
      * @throws IllegalArgumentException if the GTIN is null or not a variable weight GTIN with weight
      */
-    public static int getWeightFromWeightItem(String gtin) {
+    public static int extractWeightFromWeightItem(String gtin) {
         validateFormat13or14(gtin);
         String s = getVariableWeightGTIN13(gtin);
         if (s == null || !(s.charAt(1) >= '3' && s.charAt(1) <= '5')) {

@@ -44,8 +44,8 @@ GTIN.normalize("000012345678") // returns "12345678"
 GTIN.isWeightItem("2388060112344")
 GTIN.isWeightItemWithPrice("2088060112344")
 GTIN.isWeightItemWithWeight("2388060112344")
-GTIN.getPriceFromWeightItem("02188060112344") // returns 123.40
-GTIN.getWeightFromWeightItem("02388060112344") // returns 1234
+GTIN.extractPriceFromWeightItem("02188060112344") // returns 123.40
+GTIN.extractWeightFromWeightItem("02388060112344") // returns 1234
 GTIN.normalizeWeightItem("2388060112344") // returns "2388060100006"
 ```
 
