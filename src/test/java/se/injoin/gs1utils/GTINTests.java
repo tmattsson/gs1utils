@@ -18,6 +18,7 @@ package se.injoin.gs1utils;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -285,6 +286,29 @@ public class GTINTests {
         assertEquals("1234567890123", GTIN.shorten("1234567890123"));
         assertEquals("1234567890123", GTIN.shorten("01234567890123"));
         assertEquals("12345678901234", GTIN.shorten("12345678901234"));
+    }
+
+    @Test
+    public void testAllPossibleFormats() {
+        assertNull(GTIN.allPossibleFormats(null));
+        List<String> formats = GTIN.allPossibleFormats("12345678");
+        assertEquals(4, formats.size());
+        assertEquals("12345678", formats.get(0));
+        assertEquals("000012345678", formats.get(1));
+        assertEquals("0000012345678", formats.get(2));
+        assertEquals("00000012345678", formats.get(3));
+        formats = GTIN.allPossibleFormats("123456789012");
+        assertEquals(3, formats.size());
+        assertEquals("123456789012", formats.get(0));
+        assertEquals("0123456789012", formats.get(1));
+        assertEquals("00123456789012", formats.get(2));
+        formats = GTIN.allPossibleFormats("1234567890123");
+        assertEquals(2, formats.size());
+        assertEquals("1234567890123", formats.get(0));
+        assertEquals("01234567890123", formats.get(1));
+        formats = GTIN.allPossibleFormats("12345678901234");
+        assertEquals(1, formats.size());
+        assertEquals("12345678901234", formats.get(0));
     }
 
     @Test

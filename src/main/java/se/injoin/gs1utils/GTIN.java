@@ -17,6 +17,8 @@ package se.injoin.gs1utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 import static se.injoin.gs1utils.Internals.*;
 
@@ -292,6 +294,25 @@ public final class GTIN {
             gtin = normalizeWeightItem(gtin);
         }
         return shorten(gtin);
+    }
+
+    public static List<String> allPossibleFormats(String gtin) {
+        if (gtin == null) {
+            return null;
+        }
+        validateFormat(gtin);
+        ArrayList<String> formats = new ArrayList<String>(4);
+        if (convertibleToGTIN8(gtin)) {
+            formats.add(toGTIN8(gtin));
+        }
+        if (convertibleToGTIN12(gtin)) {
+            formats.add(toGTIN12(gtin));
+        }
+        if (convertibleToGTIN13(gtin)) {
+            formats.add(toGTIN13(gtin));
+        }
+        formats.add(toGTIN14(gtin));
+        return formats;
     }
 
     /**
