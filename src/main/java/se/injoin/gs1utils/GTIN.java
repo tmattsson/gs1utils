@@ -223,28 +223,28 @@ public final class GTIN {
     /**
      * Determines if a GTIN can be converted to a GTIN-14 or is a GTIN-14 already.
      */
-    public static boolean canBecomeGTIN14(String gtin) {
+    public static boolean convertibleToGTIN14(String gtin) {
         return isGTIN(gtin);
     }
 
     /**
      * Determines if a GTIN can be converted to a GTIN-13 or is a GTIN-13 already.
      */
-    public static boolean canBecomeGTIN13(String gtin) {
+    public static boolean convertibleToGTIN13(String gtin) {
         return isGTIN(gtin) && (gtin.length() <= 13 || Internals.startsWithNZeroes(gtin, 1));
     }
 
     /**
      * Determines if a GTIN can be converted to a GTIN-12 or is a GTIN-12 already.
      */
-    public static boolean canBecomeGTIN12(String gtin) {
+    public static boolean convertibleToGTIN12(String gtin) {
         return isGTIN(gtin) && gtin.length() <= 12 || Internals.startsWithNZeroes(gtin, gtin.length() - 12);
     }
 
     /**
      * Determines if a GTIN can be converted to a GTIN-8 or is a GTIN-8 already.
      */
-    public static boolean canBecomeGTIN8(String gtin) {
+    public static boolean convertibleToGTIN8(String gtin) {
         return isGTIN(gtin) && gtin.length() == 8 || Internals.startsWithNZeroes(gtin, gtin.length() - 8);
     }
 
