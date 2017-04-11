@@ -20,6 +20,9 @@ GTINs come in 4 lengths, GTIN-14, GTIN-13, GTIN-12 and GTIN-8, also known as UPC
 GTIN.isGTIN("12345678")
 GTIN.isGTIN("12345678901234")
 GTIN.isGTIN14("12345678901234")
+GTIN.isGTIN13("1234567890123")
+GTIN.isGTIN12("123456789012")
+GTIN.isGTIN8("12345678")
 GTIN.isValid("12345678")  // checks both format and check digit
 GTIN.validateFormat("12345678") // throws exception if format is invalid
 GTIN.validateFormatAndCheckDigit("12345678") // throws exception if format or check digit invalid
