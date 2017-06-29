@@ -1,5 +1,7 @@
 # Utilities for GS1 GTIN GLN and SSCC codes
-Java library for GS1 data structures such as GTIN, GLN and SSCC commonly used in barcodes. Provides methods for validation and conversion between different length GTINs.
+Java library for GS1 data structures commonly used in barcodes, such as GTIN, GLN, SSCC and element strings. Provides methods for validation and conversion between different length GTINs.
+
+Provides parsing of element strings used in GS1-128 barcodes.
 
 Supports variable weight GTINs as defined by GS1 Sweden in the (GTIN-14) 02- namespace.
 
@@ -79,6 +81,23 @@ SSCC.isSSCC("106141411234567897")
 SSCC.isValid("106141411234567897")
 SSCC.validateFormat("106141411234567897") // throws exception if format is not valid
 SSCC.validateFormatAndCheckDigit("106141411234567897") // throws exception if format or check digit invalid
+```
+
+### Element strings (GS1-128)
+
+Element strings are the data structure used by GS1-128 barcodes and contain a sequence of key-value pairs. The keys are called application identifiers. The library provides support for parsing these sequences.
+
+Values of variable length must be separated using the ascii character 29 (hex 1D).
+
+This example parses the GS1-128 printed as: `(01)97311876341811(3103)007520(15)170809`.
+
+```java
+ElementStrings.ParseResult result = ElementStrings.parse("0197311876341811310300752015170809");
+result.isPartial() // true if the entirety of the strings could not be parsed
+result.getErrorMessage() // in case of a partial parse results this describes the error encountered
+result.getString(ApplicationIdentifier.GTIN) // returns "97311876341811"
+result.getDecimal(ApplicationIdentifier.ITEM_NET_WEIGHT_KG) // returns 7.520 (BigDecimal)
+result.getDate(ApplicationIdentifier.BEST_BEFORE_DATE) // 2017-08-09 (java.util.Date)
 ```
 
 ## Check digits
