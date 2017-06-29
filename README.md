@@ -1,4 +1,4 @@
-# Utilities for GS1 GTIN GLN and SSCC codes
+# Utilities for GS1 barcodes
 Java library for GS1 data structures commonly used in barcodes, such as GTIN, GLN, SSCC and element strings. Provides methods for validation and conversion between different length GTINs.
 
 Provides parsing of element strings used in GS1-128 barcodes.
