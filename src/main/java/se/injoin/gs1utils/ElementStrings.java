@@ -105,7 +105,7 @@ public class ElementStrings {
      * could be successfully parsed and an error string describing what went wrong and at what position in the sequence
      * the error occurred. The position reported is zero-based.
      */
-    static ParseResult parse(String sequence) {
+    public static ParseResult parse(String sequence) {
 
         if (sequence == null) {
             throw new NullPointerException("Sequence must not be null");
