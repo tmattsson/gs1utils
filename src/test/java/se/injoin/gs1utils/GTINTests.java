@@ -312,157 +312,157 @@ public class GTINTests {
     }
 
     @Test
-    public void testIsWeightItem() {
-        assertFalse(GTIN.isWeightItem(null));
-        assertFalse(GTIN.isWeightItem(""));
-        assertFalse(GTIN.isWeightItem(" "));
-        assertFalse(GTIN.isWeightItem("1234"));
-        assertFalse(GTIN.isWeightItem("ABCD"));
-        assertFalse(GTIN.isWeightItem("22345678"));
-        assertFalse(GTIN.isWeightItem("223456789012"));
-        assertTrue(GTIN.isWeightItem("2088060112344"));
-        assertTrue(GTIN.isWeightItem("2188060112344"));
-        assertTrue(GTIN.isWeightItem("2288060112344"));
-        assertTrue(GTIN.isWeightItem("2388060112344"));
-        assertTrue(GTIN.isWeightItem("2488060112344"));
-        assertTrue(GTIN.isWeightItem("2588060112344"));
-        assertFalse(GTIN.isWeightItem("2688060112344"));
-        assertFalse(GTIN.isWeightItem("2788060112344"));
-        assertFalse(GTIN.isWeightItem("2888060112344"));
-        assertFalse(GTIN.isWeightItem("2988060112344"));
-        assertTrue(GTIN.isWeightItem("02388060112344"));
+    public void testIsVariableMeasureItem() {
+        assertFalse(GTIN.isVariableMeasureItem(null));
+        assertFalse(GTIN.isVariableMeasureItem(""));
+        assertFalse(GTIN.isVariableMeasureItem(" "));
+        assertFalse(GTIN.isVariableMeasureItem("1234"));
+        assertFalse(GTIN.isVariableMeasureItem("ABCD"));
+        assertFalse(GTIN.isVariableMeasureItem("22345678"));
+        assertFalse(GTIN.isVariableMeasureItem("223456789012"));
+        assertTrue(GTIN.isVariableMeasureItem("2088060112344"));
+        assertTrue(GTIN.isVariableMeasureItem("2188060112344"));
+        assertTrue(GTIN.isVariableMeasureItem("2288060112344"));
+        assertTrue(GTIN.isVariableMeasureItem("2388060112344"));
+        assertTrue(GTIN.isVariableMeasureItem("2488060112344"));
+        assertTrue(GTIN.isVariableMeasureItem("2588060112344"));
+        assertFalse(GTIN.isVariableMeasureItem("2688060112344"));
+        assertFalse(GTIN.isVariableMeasureItem("2788060112344"));
+        assertFalse(GTIN.isVariableMeasureItem("2888060112344"));
+        assertFalse(GTIN.isVariableMeasureItem("2988060112344"));
+        assertTrue(GTIN.isVariableMeasureItem("02388060112344"));
     }
 
     @Test
-    public void testIsWeightItemWithPrice() {
-        assertFalse(GTIN.isWeightItemWithPrice(null));
-        assertFalse(GTIN.isWeightItemWithPrice(""));
-        assertFalse(GTIN.isWeightItemWithPrice(" "));
-        assertFalse(GTIN.isWeightItemWithPrice("1234"));
-        assertFalse(GTIN.isWeightItemWithPrice("ABCD"));
-        assertFalse(GTIN.isWeightItemWithPrice("22345678"));
-        assertFalse(GTIN.isWeightItemWithPrice("223456789012"));
-        assertTrue(GTIN.isWeightItemWithPrice("2088060112344"));
-        assertTrue(GTIN.isWeightItemWithPrice("2188060112344"));
-        assertTrue(GTIN.isWeightItemWithPrice("2288060112344"));
-        assertFalse(GTIN.isWeightItemWithPrice("2388060112344"));
-        assertFalse(GTIN.isWeightItemWithPrice("2488060112344"));
-        assertFalse(GTIN.isWeightItemWithPrice("2588060112344"));
-        assertFalse(GTIN.isWeightItemWithPrice("2688060112344"));
-        assertFalse(GTIN.isWeightItemWithPrice("2788060112344"));
-        assertFalse(GTIN.isWeightItemWithPrice("2888060112344"));
-        assertFalse(GTIN.isWeightItemWithPrice("2988060112344"));
-        assertFalse(GTIN.isWeightItemWithPrice("02388060112344"));
+    public void testIsVariableMeasureItemWithPrice() {
+        assertFalse(GTIN.isVariableMeasureItemWithPrice(null));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice(""));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice(" "));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("1234"));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("ABCD"));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("22345678"));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("223456789012"));
+        assertTrue(GTIN.isVariableMeasureItemWithPrice("2088060112344"));
+        assertTrue(GTIN.isVariableMeasureItemWithPrice("2188060112344"));
+        assertTrue(GTIN.isVariableMeasureItemWithPrice("2288060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("2388060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("2488060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("2588060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("2688060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("2788060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("2888060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("2988060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithPrice("02388060112344"));
     }
 
     @Test
-    public void testIsWeightItemWithWeight() {
-        assertFalse(GTIN.isWeightItemWithWeight(null));
-        assertFalse(GTIN.isWeightItemWithWeight(""));
-        assertFalse(GTIN.isWeightItemWithWeight(" "));
-        assertFalse(GTIN.isWeightItemWithWeight("1234"));
-        assertFalse(GTIN.isWeightItemWithWeight("ABCD"));
-        assertFalse(GTIN.isWeightItemWithWeight("22345678"));
-        assertFalse(GTIN.isWeightItemWithWeight("223456789012"));
-        assertFalse(GTIN.isWeightItemWithWeight("2088060112344"));
-        assertFalse(GTIN.isWeightItemWithWeight("2188060112344"));
-        assertFalse(GTIN.isWeightItemWithWeight("2288060112344"));
-        assertTrue(GTIN.isWeightItemWithWeight("2388060112344"));
-        assertTrue(GTIN.isWeightItemWithWeight("2488060112344"));
-        assertTrue(GTIN.isWeightItemWithWeight("2588060112344"));
-        assertFalse(GTIN.isWeightItemWithWeight("2688060112344"));
-        assertFalse(GTIN.isWeightItemWithWeight("2788060112344"));
-        assertFalse(GTIN.isWeightItemWithWeight("2888060112344"));
-        assertFalse(GTIN.isWeightItemWithWeight("2988060112344"));
-        assertTrue(GTIN.isWeightItemWithWeight("02388060112344"));
+    public void testIsVariableMeasureItemWithWeight() {
+        assertFalse(GTIN.isVariableMeasureItemWithWeight(null));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight(""));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight(" "));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight("1234"));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight("ABCD"));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight("22345678"));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight("223456789012"));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight("2088060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight("2188060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight("2288060112344"));
+        assertTrue(GTIN.isVariableMeasureItemWithWeight("2388060112344"));
+        assertTrue(GTIN.isVariableMeasureItemWithWeight("2488060112344"));
+        assertTrue(GTIN.isVariableMeasureItemWithWeight("2588060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight("2688060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight("2788060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight("2888060112344"));
+        assertFalse(GTIN.isVariableMeasureItemWithWeight("2988060112344"));
+        assertTrue(GTIN.isVariableMeasureItemWithWeight("02388060112344"));
     }
 
     @Test
-    public void testGetPriceFromWeightItem() {
+    public void testExtractPriceFromVariableMeasureItem() {
         try {
-            GTIN.extractPriceFromWeightItem(null);
+            GTIN.extractPriceFromVariableMeasureItem(null);
             fail();
         } catch (NullPointerException ignored) {
         }
         try {
-            GTIN.extractPriceFromWeightItem("ABCD");
+            GTIN.extractPriceFromVariableMeasureItem("ABCD");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN ABCD, must be digits", e.getMessage());
         }
         try {
-            GTIN.extractPriceFromWeightItem("1234");
+            GTIN.extractPriceFromVariableMeasureItem("1234");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN 1234, must be 13 or 14 digits long", e.getMessage());
         }
         try {
-            GTIN.extractPriceFromWeightItem("12334567890123");
+            GTIN.extractPriceFromVariableMeasureItem("12334567890123");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("GTIN 12334567890123 is not a weight item with price", e.getMessage());
+            assertEquals("GTIN 12334567890123 is not a variable measure item with price", e.getMessage());
         }
-        assertEquals(new BigDecimal("12.34"), GTIN.extractPriceFromWeightItem("02088060112344"));
-        assertEquals(new BigDecimal("123.40"), GTIN.extractPriceFromWeightItem("02188060112344"));
-        assertEquals(new BigDecimal("1234.00"), GTIN.extractPriceFromWeightItem("02288060112344"));
+        assertEquals(new BigDecimal("12.34"), GTIN.extractPriceFromVariableMeasureItem("02088060112344"));
+        assertEquals(new BigDecimal("123.40"), GTIN.extractPriceFromVariableMeasureItem("02188060112344"));
+        assertEquals(new BigDecimal("1234.00"), GTIN.extractPriceFromVariableMeasureItem("02288060112344"));
     }
 
     @Test
-    public void testExtractWeightFromWeightItem() {
+    public void testExtractWeightFromVariableMeasureItem() {
         try {
-            GTIN.extractWeightFromWeightItem(null);
+            GTIN.extractWeightFromVariableMeasureItem(null);
             fail();
         } catch (NullPointerException ignored) {
         }
         try {
-            GTIN.extractWeightFromWeightItem("ABCD");
+            GTIN.extractWeightFromVariableMeasureItem("ABCD");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN ABCD, must be digits", e.getMessage());
         }
         try {
-            GTIN.extractWeightFromWeightItem("1234");
+            GTIN.extractWeightFromVariableMeasureItem("1234");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN 1234, must be 13 or 14 digits long", e.getMessage());
         }
         try {
-            GTIN.extractWeightFromWeightItem("12334567890123");
+            GTIN.extractWeightFromVariableMeasureItem("12334567890123");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("GTIN 12334567890123 is not a weight item with weight", e.getMessage());
+            assertEquals("GTIN 12334567890123 is not a variable measure item with weight", e.getMessage());
         }
-        assertEquals(1234, GTIN.extractWeightFromWeightItem("02388060112344"));
-        assertEquals(12340, GTIN.extractWeightFromWeightItem("02488060112344"));
-        assertEquals(123400, GTIN.extractWeightFromWeightItem("02588060112344"));
+        assertEquals(1234, GTIN.extractWeightFromVariableMeasureItem("02388060112344"));
+        assertEquals(12340, GTIN.extractWeightFromVariableMeasureItem("02488060112344"));
+        assertEquals(123400, GTIN.extractWeightFromVariableMeasureItem("02588060112344"));
     }
 
     @Test
-    public void testNormalizeWeightItem() {
+    public void testNormalizeVariableMeasureItem() {
         try {
-            GTIN.normalizeWeightItem(null);
+            GTIN.normalizeVariableMeasureItem(null);
             fail();
         } catch (NullPointerException ignored) {
         }
         try {
-            GTIN.normalizeWeightItem("ABCD");
+            GTIN.normalizeVariableMeasureItem("ABCD");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN ABCD, must be digits", e.getMessage());
         }
         try {
-            GTIN.normalizeWeightItem("1234");
+            GTIN.normalizeVariableMeasureItem("1234");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Invalid GTIN 1234, must be 13 or 14 digits long", e.getMessage());
         }
         try {
-            GTIN.normalizeWeightItem("12334567890123");
+            GTIN.normalizeVariableMeasureItem("12334567890123");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("GTIN 12334567890123 is not a weight item", e.getMessage());
+            assertEquals("GTIN 12334567890123 is not a variable measure item", e.getMessage());
         }
-        assertEquals("02388060100006", GTIN.normalizeWeightItem("02388060112344"));
-        assertEquals("2388060100006", GTIN.normalizeWeightItem("2388060112344"));
+        assertEquals("02388060100006", GTIN.normalizeVariableMeasureItem("02388060112344"));
+        assertEquals("2388060100006", GTIN.normalizeVariableMeasureItem("2388060112344"));
     }
 }

@@ -281,17 +281,17 @@ public final class GTIN {
     }
 
     /**
-     * Returns the normal form for a GTIN by shortening it to its shortest possible length and if it is a weight item
-     * normalizes it by removing the weight or price. Does not validate the check digit and only recalculates it if it
-     * is a weight item.
+     * Returns the normal form for a GTIN by shortening it to its shortest possible length and if it is a variable
+     * measure item normalizes it by removing the weight or price. Does not validate the check digit and only
+     * recalculates it if it is a variable measure item.
      */
     public static String normalize(String gtin) {
         if (gtin == null) {
             return null;
         }
         validateFormat(gtin);
-        if (isWeightItem(gtin)) {
-            gtin = normalizeWeightItem(gtin);
+        if (isVariableMeasureItem(gtin)) {
+            gtin = normalizeVariableMeasureItem(gtin);
         }
         return shorten(gtin);
     }
@@ -316,43 +316,43 @@ public final class GTIN {
     }
 
     /**
-     * Determines if a GTIN is a variable weight GTIN with either weight or price.
+     * Determines if a GTIN is a variable measure item (contains either weight or price).
      *
      * @link http://www.gs1.se/sv/vara-standarder/identifiera/Viktvarunummer/
      * @link http://www.gs1.se/globalassets/pub/artiklar_med_varierande_vikt.pdf
      */
-    public static boolean isWeightItem(String gtin) {
-        String s = getVariableWeightGTIN13(gtin);
+    public static boolean isVariableMeasureItem(String gtin) {
+        String s = getVariableMeasureGTIN13(gtin);
         return s != null && (s.charAt(1) >= '0' && s.charAt(1) <= '5');
     }
 
     /**
-     * Determines if a GTIN is a variable weight GTIN with price.
+     * Determines if a GTIN is a variable measure item with price.
      */
-    public static boolean isWeightItemWithPrice(String gtin) {
-        String s = getVariableWeightGTIN13(gtin);
+    public static boolean isVariableMeasureItemWithPrice(String gtin) {
+        String s = getVariableMeasureGTIN13(gtin);
         return s != null && (s.charAt(1) >= '0' && s.charAt(1) <= '2');
     }
 
     /**
-     * Determines if a GTIN is a variable weight GTIN with weight.
+     * Determines if a GTIN is a variable measure item with weight.
      */
-    public static boolean isWeightItemWithWeight(String gtin) {
-        String s = getVariableWeightGTIN13(gtin);
+    public static boolean isVariableMeasureItemWithWeight(String gtin) {
+        String s = getVariableMeasureGTIN13(gtin);
         return s != null && (s.charAt(1) >= '3' && s.charAt(1) <= '5');
     }
 
     /**
-     * Extracts the price from a variable weight GTIN.
+     * Extracts the price from a variable measure GTIN.
      *
      * @throws NullPointerException     if the GTIN is null
-     * @throws IllegalArgumentException if the GTIN is null or not a variable weight GTIN with price
+     * @throws IllegalArgumentException if the GTIN is null or not a variable measure GTIN with price
      */
-    public static BigDecimal extractPriceFromWeightItem(String gtin) {
+    public static BigDecimal extractPriceFromVariableMeasureItem(String gtin) {
         validateFormat13or14(gtin);
-        String s = getVariableWeightGTIN13(gtin);
+        String s = getVariableMeasureGTIN13(gtin);
         if (s == null || !(s.charAt(1) >= '0' && s.charAt(1) <= '2')) {
-            throw new IllegalArgumentException("GTIN " + gtin + " is not a weight item with price");
+            throw new IllegalArgumentException("GTIN " + gtin + " is not a variable measure item with price");
         }
         int n = Integer.parseInt(s.substring(8, 12));
         if (s.charAt(1) == '0') {
@@ -365,16 +365,16 @@ public final class GTIN {
     }
 
     /**
-     * Extracts the weight in grams from a variable weight GTIN.
+     * Extracts the weight in grams from a variable measure GTIN.
      *
      * @throws NullPointerException     if the GTIN is null
-     * @throws IllegalArgumentException if the GTIN is null or not a variable weight GTIN with weight
+     * @throws IllegalArgumentException if the GTIN is null or not a variable measure GTIN with weight
      */
-    public static int extractWeightFromWeightItem(String gtin) {
+    public static int extractWeightFromVariableMeasureItem(String gtin) {
         validateFormat13or14(gtin);
-        String s = getVariableWeightGTIN13(gtin);
+        String s = getVariableMeasureGTIN13(gtin);
         if (s == null || !(s.charAt(1) >= '3' && s.charAt(1) <= '5')) {
-            throw new IllegalArgumentException("GTIN " + gtin + " is not a weight item with weight");
+            throw new IllegalArgumentException("GTIN " + gtin + " is not a variable measure item with weight");
         }
         int n = Integer.parseInt(s.substring(8, 12));
         if (s.charAt(1) == '3') {
@@ -387,15 +387,15 @@ public final class GTIN {
     }
 
     /**
-     * Generates a matching GTIN without price or weight for variable weight GTIN with correct check digit. Preserves
+     * Generates a matching GTIN without price or weight for a variable measure GTIN with correct check digit. Preserves
      * the length of the GTIN.
      *
      * @throws NullPointerException     if the GTIN is null
-     * @throws IllegalArgumentException if the GTIN is null or not a variable weight GTIN
+     * @throws IllegalArgumentException if the GTIN is null or not a variable measure GTIN
      */
-    public static String normalizeWeightItem(String gtin) {
+    public static String normalizeVariableMeasureItem(String gtin) {
         validateFormat13or14(gtin);
-        if (isWeightItem(gtin)) {
+        if (isVariableMeasureItem(gtin)) {
             if (gtin.length() == 13) {
                 return CheckDigit.calculateAndAppend(gtin.substring(0, 8) + "0000");
             }
@@ -403,10 +403,10 @@ public final class GTIN {
                 return CheckDigit.calculateAndAppend(gtin.substring(0, 9) + "0000");
             }
         }
-        throw new IllegalArgumentException("GTIN " + gtin + " is not a weight item");
+        throw new IllegalArgumentException("GTIN " + gtin + " is not a variable measure item");
     }
 
-    private static String getVariableWeightGTIN13(String gtin) {
+    private static String getVariableMeasureGTIN13(String gtin) {
         if (!isGTIN(gtin)) {
             return null;
         }

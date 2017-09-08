@@ -3,7 +3,7 @@ Java library for GS1 data structures commonly used in barcodes, such as GTIN, GL
 
 Provides parsing of element strings used in GS1-128 barcodes.
 
-Supports variable weight GTINs as defined by GS1 Sweden in the (GTIN-14) 02- namespace.
+Supports variable measure GTINs as defined by GS1 Sweden in the (GTIN-14) 02- namespace.
 
 The library is licensed under Apache License 2 and has no dependencies on other libraries.
 
@@ -13,8 +13,8 @@ GTINs come in 4 lengths, GTIN-14, GTIN-13, GTIN-12 and GTIN-8, also known as UPC
 
 * Verification of either format or format and check digit.
 * Identification of GTINs that are ISBN, ISSN, ISMN.
-* Identification and value extraction from GS1 Sweden weight item GTINs.
-* Normalization of GS1 Sweden weight item GTINs to their representative form without weight/price.
+* Identification and value extraction from GS1 Sweden variable measure GTINs.
+* Normalization of GS1 Sweden variable measure GTINs to their representative form without weight or price.
 * Normalization of GTINs to their shortest representative form.
 
 ```java
@@ -45,13 +45,13 @@ GTIN.normalize("000012345678") // returns "12345678"
 ```
 
 ```java
-// GS1 Sweden variable weight item GTINs
-GTIN.isWeightItem("2388060112344")
-GTIN.isWeightItemWithPrice("2088060112344")
-GTIN.isWeightItemWithWeight("2388060112344")
-GTIN.extractPriceFromWeightItem("02188060112344") // returns 123.40
-GTIN.extractWeightFromWeightItem("02388060112344") // returns 1234
-GTIN.normalizeWeightItem("2388060112344") // returns "2388060100006"
+// GS1 Sweden variable measure item GTINs
+GTIN.isVariableMeasureItem("2388060112344")
+GTIN.isVariableMeasureItemWithPrice("2088060112344")
+GTIN.isVariableMeasureItemWithWeight("2388060112344")
+GTIN.extractPriceFromVariableMeasureItem("02188060112344") // returns 123.40
+GTIN.extractWeightFromVariableMeasureItem("02388060112344") // returns 1234
+GTIN.normalizeVariableMeasureItem("2388060112344") // returns "2388060100006"
 ```
 
 ```java
