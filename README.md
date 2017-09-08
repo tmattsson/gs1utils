@@ -40,7 +40,8 @@ GTIN.convertibleToGTIN14("12345678")
 GTIN.convertibleToGTIN13("12345678")
 GTIN.convertibleToGTIN12("12345678")
 GTIN.convertibleToGTIN8("12345678")
-GTIN.shorten("000012345678") // returns "12345678"
+GTIN.shorten("000012345678") // returns "12345678" (GTIN-8)
+GTIN.shorten("01234567890123") // returns "1234567890123" (GTIN-13)
 GTIN.normalize("000012345678") // returns "12345678"
 ```
 
@@ -52,6 +53,7 @@ GTIN.isVariableMeasureItemWithWeight("2388060112344")
 GTIN.extractPriceFromVariableMeasureItem("02188060112344") // returns 123.40
 GTIN.extractWeightFromVariableMeasureItem("02388060112344") // returns 1234
 GTIN.normalizeVariableMeasureItem("2388060112344") // returns "2388060100006"
+GTIN.normalize("2388060112344") // returns "2388060100006"
 ```
 
 ```java
