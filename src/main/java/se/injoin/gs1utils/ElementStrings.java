@@ -314,24 +314,13 @@ public class ElementStrings {
             }
             try {
                 Calendar calendar = Calendar.getInstance();
-                calendar.setLenient(false);
-                calendar.clear();
-                // Calculate the century to use using the algorithm in GS1 General specification section 7.12.
-                int century;
-                int currentYear = calendar.get(Calendar.YEAR);
-                int currentCentury = currentYear - (currentYear % 100);
-                int x = year - (currentYear % 100);
-                if (x >= 51 && x <= 99) {
-                    century = currentCentury - 100;
-                } else if (x >= -99 && x <= -50) {
-                    century = currentCentury + 100;
-                } else {
-                    century = currentCentury;
-                }
+                year = resolveTwoDigitYear(year, calendar.get(Calendar.YEAR));
                 // When day is zero that means last day of the month
                 boolean lastOfMonth = day == 0;
                 day = day == 0 ? 1 : day;
-                calendar.set(century + year, month - 1, day, hour, minutes, seconds);
+                calendar.clear();
+                calendar.setLenient(false);
+                calendar.set(year, month - 1, day, hour, minutes, seconds);
                 if (lastOfMonth) {
                     calendar.add(Calendar.MONTH, 1);
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -340,6 +329,23 @@ public class ElementStrings {
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("invalid date");
             }
+        }
+
+        /**
+         * Converts a two digit year to four digits using the algorithm in GS1 General specification section 7.12.
+         *
+         * @param year        two digit year
+         * @param currentYear four digit century and year
+         */
+        int resolveTwoDigitYear(int year, int currentYear) {
+            int century = currentYear - (currentYear % 100);
+            int difference = year - (currentYear % 100);
+            if (difference >= 51 && difference <= 99) {
+                century -= 100;
+            } else if (difference >= -99 && difference <= -50) {
+                century += 100;
+            }
+            return century + year;
         }
 
         BigDecimal readDecimal(int minLength, int maxLength) {

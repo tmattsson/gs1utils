@@ -263,6 +263,14 @@ public class ElementStringsTests {
     }
 
     @Test
+    public void testParseDateCalculatesCentury2() {
+        ElementStrings.ParseResult result = ElementStrings.parse("15220118");
+        assertFalse(result.isPartial());
+        assertFalse(result.isEmpty());
+        assertDate("2022-01-18", result.getDate(ApplicationIdentifier.BEST_BEFORE_DATE));
+    }
+
+    @Test
     public void testParseDateRange() {
         ElementStrings.ParseResult result = ElementStrings.parse("7007170522170702");
         assertFalse(result.isPartial());
@@ -552,6 +560,38 @@ public class ElementStringsTests {
         assertDate("2017-06-28", result.getDate(ApplicationIdentifier.BEST_BEFORE_DATE));
         assertDate("2017-05-08", result.getDate(ApplicationIdentifier.PACKAGING_DATE));
         assertEquals("17050838", result.getString(ApplicationIdentifier.BATCH_OR_LOT_NUMBER));
+    }
+
+    @Test
+    public void testResolveTwoDigitYear() {
+        ElementStrings.SequenceReader r = new ElementStrings.SequenceReader("");
+
+        // Same year
+        assertEquals(2000, r.resolveTwoDigitYear(0,2000));
+        // Previous year
+        assertEquals(1999, r.resolveTwoDigitYear(99,2000));
+        // 50 years in the future
+        assertEquals(2050, r.resolveTwoDigitYear(50,2000));
+        // +1 from that is 49 years in the past
+        assertEquals(1951, r.resolveTwoDigitYear(51,2000));
+
+        // Same year
+        assertEquals(2050, r.resolveTwoDigitYear(50,2050));
+        // Previous year
+        assertEquals(2049, r.resolveTwoDigitYear(49,2050));
+        // 50 years in the future
+        assertEquals(2100, r.resolveTwoDigitYear(0,2050));
+        // +1 from that is 49 years in the past
+        assertEquals(2001, r.resolveTwoDigitYear(1,2050));
+
+        // Same year
+        assertEquals(2099, r.resolveTwoDigitYear(99,2099));
+        // Previous year
+        assertEquals(2098, r.resolveTwoDigitYear(98,2099));
+        // 50 years in the future
+        assertEquals(2149, r.resolveTwoDigitYear(49,2099));
+        // +1 from that is 49 years in the past
+        assertEquals(2050, r.resolveTwoDigitYear(50,2099));
     }
 
     private void assertDate(String expected, Date actual) {
