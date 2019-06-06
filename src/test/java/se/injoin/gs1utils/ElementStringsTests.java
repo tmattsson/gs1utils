@@ -275,7 +275,7 @@ public class ElementStringsTests {
         ElementStrings.ParseResult result = ElementStrings.parse("7007170522170702");
         assertFalse(result.isPartial());
         assertFalse(result.isEmpty());
-        List list = result.getList(ApplicationIdentifier.HARVEST_DATE);
+        List<?> list = result.getList(ApplicationIdentifier.HARVEST_DATE);
         assertEquals(2, list.size());
         assertDate("2017-05-22", (Date) list.get(0));
         assertDate("2017-07-02", (Date) list.get(1));
@@ -286,7 +286,7 @@ public class ElementStringsTests {
         ElementStrings.ParseResult result = ElementStrings.parse("7007170522");
         assertFalse(result.isPartial());
         assertFalse(result.isEmpty());
-        List list = result.getList(ApplicationIdentifier.HARVEST_DATE.getKey());
+        List<?> list = result.getList(ApplicationIdentifier.HARVEST_DATE.getKey());
         assertEquals(1, list.size());
         assertDate("2017-05-22", (Date) list.get(0));
     }
@@ -377,7 +377,7 @@ public class ElementStringsTests {
         ElementStrings.ParseResult result = ElementStrings.parse("391212345678");
         assertFalse(result.isPartial());
         assertFalse(result.isEmpty());
-        List list = result.getList(ApplicationIdentifier.AMOUNT_PAYABLE_WITH_CURRENCY);
+        List<?> list = result.getList(ApplicationIdentifier.AMOUNT_PAYABLE_WITH_CURRENCY);
         assertEquals(2, list.size());
         assertEquals("123", list.get(0));
         assertEquals(new BigDecimal("456.78"), list.get(1));
@@ -388,7 +388,7 @@ public class ElementStringsTests {
         ElementStrings.ParseResult result = ElementStrings.parse("393212345678");
         assertFalse(result.isPartial());
         assertFalse(result.isEmpty());
-        List list = result.getList(ApplicationIdentifier.AMOUNT_PAYABLE_PER_SINGLE_ITEM_WITH_CURRENCY);
+        List<?> list = result.getList(ApplicationIdentifier.AMOUNT_PAYABLE_PER_SINGLE_ITEM_WITH_CURRENCY);
         assertEquals(2, list.size());
         assertEquals("123", list.get(0));
         assertEquals(new BigDecimal("456.78"), list.get(1));
@@ -399,7 +399,7 @@ public class ElementStringsTests {
         ElementStrings.ParseResult result = ElementStrings.parse("421123ABCDEF");
         assertFalse(result.isPartial());
         assertFalse(result.isEmpty());
-        List list = result.getList(ApplicationIdentifier.SHIP_TO_POSTAL_CODE_WITH_COUNTRY);
+        List<?> list = result.getList(ApplicationIdentifier.SHIP_TO_POSTAL_CODE_WITH_COUNTRY);
         assertEquals(2, list.size());
         assertEquals("123", list.get(0));
         assertEquals("ABCDEF", list.get(1));
@@ -410,7 +410,7 @@ public class ElementStringsTests {
         ElementStrings.ParseResult result = ElementStrings.parse("423111222333");
         assertFalse(result.isPartial());
         assertFalse(result.isEmpty());
-        List list = result.getList(ApplicationIdentifier.COUNTRY_OF_INITIAL_PROCESSING);
+        List<?> list = result.getList(ApplicationIdentifier.COUNTRY_OF_INITIAL_PROCESSING);
         assertEquals(3, list.size());
         assertEquals("111", list.get(0));
         assertEquals("222", list.get(1));
@@ -438,7 +438,7 @@ public class ElementStringsTests {
         ElementStrings.ParseResult result = ElementStrings.parse("425111222333");
         assertFalse(result.isPartial());
         assertFalse(result.isEmpty());
-        List list = result.getList(ApplicationIdentifier.COUNTRY_OF_DISASSEMBLY);
+        List<?> list = result.getList(ApplicationIdentifier.COUNTRY_OF_DISASSEMBLY);
         assertEquals(3, list.size());
         assertEquals("111", list.get(0));
         assertEquals("222", list.get(1));
@@ -450,7 +450,7 @@ public class ElementStringsTests {
         ElementStrings.ParseResult result = ElementStrings.parse("7030111ABCDEF\u001d7039222XYZ");
         assertFalse(result.isPartial());
         assertFalse(result.isEmpty());
-        List list = result.getList("7030");
+        List<?> list = result.getList("7030");
         assertEquals(2, list.size());
         assertEquals("111", list.get(0));
         assertEquals("ABCDEF", list.get(1));
@@ -560,6 +560,17 @@ public class ElementStringsTests {
         assertDate("2017-06-28", result.getDate(ApplicationIdentifier.BEST_BEFORE_DATE));
         assertDate("2017-05-08", result.getDate(ApplicationIdentifier.PACKAGING_DATE));
         assertEquals("17050838", result.getString(ApplicationIdentifier.BATCH_OR_LOT_NUMBER));
+    }
+
+    @Test
+    public void testParseCustomSeparator() {
+        ElementStrings.ParseResult result = ElementStrings.parse("011730020641446615170628131705081017050838;;91CustomInformation1;;92CustomInformation2", ";;");
+        assertFalse(result.isPartial());
+        assertFalse(result.isEmpty());
+        assertTrue(result.contains("91"));
+        assertTrue(result.contains(ApplicationIdentifier.COMPANY_INTERNAL_INFORMATION_1));
+        assertEquals("CustomInformation1", result.getString("91"));
+        assertEquals("CustomInformation2", result.getString(ApplicationIdentifier.COMPANY_INTERNAL_INFORMATION_2));
     }
 
     @Test
