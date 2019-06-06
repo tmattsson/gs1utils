@@ -16,7 +16,7 @@
 package se.injoin.gs1utils;
 
 /**
- * Based on GS1 General Specifications, Release 17.0.1.
+ * Based on GS1 General Specifications, Release 19
  * <p>
  * http://www.gs1.org/sites/default/files/docs/barcodes/GS1_General_Specifications.pdf
  */
@@ -99,6 +99,11 @@ public enum ApplicationIdentifier {
     SERIAL_NUMBER("21", Format.ALPHANUMERIC_VARIABLE, 20),
 
     /**
+     * Consumer product variant [r.19]
+     */
+    CONSUMER_PRODUCT_VARIANT("22", Format.ALPHANUMERIC_VARIABLE, 20),
+
+    /**
      * Additional product identification assigned by the manufacturer.
      */
     ADDITIONAL_ITEM_ID("240", Format.ALPHANUMERIC_VARIABLE, 30),
@@ -162,6 +167,7 @@ public enum ApplicationIdentifier {
     ITEM_AREA_SQUARE_METRES("314", Format.DECIMAL),
     ITEM_NET_VOLUME_LITRES("315", Format.DECIMAL),
     ITEM_NET_VOLUME_CUBIC_METRES("316", Format.DECIMAL),
+    
     ITEM_NET_WEIGHT_POUNDS("320", Format.DECIMAL),
     ITEM_LENGTH_INCHES("321", Format.DECIMAL),
     ITEM_LENGTH_FEET("322", Format.DECIMAL),
@@ -172,16 +178,6 @@ public enum ApplicationIdentifier {
     ITEM_HEIGHT_INCHES("327", Format.DECIMAL),
     ITEM_HEIGHT_FEET("328", Format.DECIMAL),
     ITEM_HEIGHT_YARDS("329", Format.DECIMAL),
-    ITEM_AREA_SQUARE_INCHES("350", Format.DECIMAL),
-    ITEM_AREA_SQUARE_FEET("351", Format.DECIMAL),
-    ITEM_AREA_SQUARE_YARDS("352", Format.DECIMAL),
-    ITEM_NET_WEIGHT_TROY_OUNCES("356", Format.DECIMAL),
-    ITEM_NET_VOLUME_OUNCES("357", Format.DECIMAL),
-    ITEM_NET_VOLUME_QUARTS("360", Format.DECIMAL),
-    ITEM_NET_VOLUME_GALLONS("361", Format.DECIMAL),
-    ITEM_NET_VOLUME_CUBIC_INCHES("364", Format.DECIMAL),
-    ITEM_NET_VOLUME_CUBIC_FEET("365", Format.DECIMAL),
-    ITEM_NET_VOLUME_CUBIC_YARDS("366", Format.DECIMAL),
 
     CONTAINER_GROSS_WEIGHT_KG("330", Format.DECIMAL),
     CONTAINER_LENGTH_METRES("331", Format.DECIMAL),
@@ -190,6 +186,11 @@ public enum ApplicationIdentifier {
     CONTAINER_AREA_SQUARE_METRES("334", Format.DECIMAL),
     CONTAINER_VOLUME_LITRES("335", Format.DECIMAL),
     CONTAINER_VOLUME_CUBIC_METRES("336", Format.DECIMAL),
+    /**
+     * Kilograms per square metre, of a particular trade item
+     */
+    KILOGRAMS_PER_SQUARE_METRE("337", Format.DECIMAL),
+
     CONTAINER_GROSS_WEIGHT_POUNDS("340", Format.DECIMAL),
     CONTAINER_LENGTH_INCHES("341", Format.DECIMAL),
     CONTAINER_LENGTH_FEET("342", Format.DECIMAL),
@@ -200,19 +201,26 @@ public enum ApplicationIdentifier {
     CONTAINER_HEIGHT_INCHES("347", Format.DECIMAL),
     CONTAINER_HEIGHT_FEET("348", Format.DECIMAL),
     CONTAINER_HEIGHT_YARDS("349", Format.DECIMAL),
+    
+    ITEM_AREA_SQUARE_INCHES("350", Format.DECIMAL),
+    ITEM_AREA_SQUARE_FEET("351", Format.DECIMAL),
+    ITEM_AREA_SQUARE_YARDS("352", Format.DECIMAL),
     CONTAINER_AREA_SQUARE_INCHES("353", Format.DECIMAL),
     CONTAINER_AREA_SQUARE_FEET("354", Format.DECIMAL),
     CONTAINER_AREA_SQUARE_YARDS("355", Format.DECIMAL),
+    ITEM_NET_WEIGHT_TROY_OUNCES("356", Format.DECIMAL),
+    ITEM_NET_VOLUME_OUNCES("357", Format.DECIMAL),
+
+    ITEM_NET_VOLUME_QUARTS("360", Format.DECIMAL),
+    ITEM_NET_VOLUME_GALLONS("361", Format.DECIMAL),
     CONTAINER_VOLUME_QUARTS("362", Format.DECIMAL),
     CONTAINER_VOLUME_GALLONS("363", Format.DECIMAL),
+    ITEM_NET_VOLUME_CUBIC_INCHES("364", Format.DECIMAL),
+    ITEM_NET_VOLUME_CUBIC_FEET("365", Format.DECIMAL),
+    ITEM_NET_VOLUME_CUBIC_YARDS("366", Format.DECIMAL),
     CONTAINER_VOLUME_CUBIC_INCHES("367", Format.DECIMAL),
     CONTAINER_VOLUME_CUBIC_FEET("368", Format.DECIMAL),
     CONTAINER_VOLUME_CUBIC_YARDS("369", Format.DECIMAL),
-
-    /**
-     * Kilograms per square metre, of a particular trade item
-     */
-    KILOGRAMS_PER_SQUARE_METRE("337", Format.DECIMAL),
 
     /**
      * Count of trade items contained in a logistic unit.
@@ -427,7 +435,7 @@ public enum ApplicationIdentifier {
     /**
      * Revision status.
      */
-    REVISION_STATUS("7021", Format.ALPHANUMERIC_VARIABLE, 20),
+    REVISION_STATUS("7022", Format.ALPHANUMERIC_VARIABLE, 20),
 
     /**
      * Global Individual Asset Identifier of an assembly.
@@ -479,6 +487,12 @@ public enum ApplicationIdentifier {
     PRODUCTION_DATE_AND_TIME("8008", Format.CUSTOM, 8, 12),
 
     /**
+     * Optically Readable Sensor Indicator.
+     */
+    OPTICAL_READABLE_SENSOR_INDICATOR("8009", Format.ALPHANUMERIC_VARIABLE, 50),
+
+    
+    /**
      * Component / Part Identifier.
      */
     COMPONENT_OR_PART_IDENTIFIER("8010", Format.ALPHANUMERIC_VARIABLE, 30),
@@ -492,6 +506,11 @@ public enum ApplicationIdentifier {
      * Software version.
      */
     SOFTWARE_VERSION("8012", Format.ALPHANUMERIC_VARIABLE, 20),
+    
+    /**
+     * Global Model Number. [r.19]
+     */
+    GLOBAL_MODEL_NUMBER("8013", Format.ALPHANUMERIC_VARIABLE, 30),
 
     /**
      * Global Service Relation Number of provider.
@@ -515,6 +534,11 @@ public enum ApplicationIdentifier {
      */
     PAYMENT_SLIP_REFERENCE_NUMBER("8020", Format.ALPHANUMERIC_VARIABLE, 25),
 
+    /**
+     * Identification of pieces of a trade item contained in a logistic unit [r.19]
+     */
+    ITIP_CONTAINED_IN_A_LOGISTIC_UNIT("8026", Format.NUMERIC_FIXED, 18),
+    
     /**
      * Coupon code identification for use in North America.
      */
@@ -540,9 +564,17 @@ public enum ApplicationIdentifier {
     /**
      * Information mutually agreed between trading partners.
      */
-    MUTUALLY_AGREED_INFORMATION("90", Format.ALPHANUMERIC_VARIABLE, 30);
-
-    // No constants defined for 91-99 Company internal information. Query parse result using strings.
+    MUTUALLY_AGREED_INFORMATION("90", Format.ALPHANUMERIC_VARIABLE, 30),
+    
+    COMPANY_INTERNAL_INFORMATION_1("91", Format.ALPHANUMERIC_VARIABLE, 90),
+    COMPANY_INTERNAL_INFORMATION_2("92", Format.ALPHANUMERIC_VARIABLE, 90),
+    COMPANY_INTERNAL_INFORMATION_3("93", Format.ALPHANUMERIC_VARIABLE, 90),
+    COMPANY_INTERNAL_INFORMATION_4("94", Format.ALPHANUMERIC_VARIABLE, 90),
+    COMPANY_INTERNAL_INFORMATION_5("95", Format.ALPHANUMERIC_VARIABLE, 90),
+    COMPANY_INTERNAL_INFORMATION_6("96", Format.ALPHANUMERIC_VARIABLE, 90),
+    COMPANY_INTERNAL_INFORMATION_7("97", Format.ALPHANUMERIC_VARIABLE, 90),
+    COMPANY_INTERNAL_INFORMATION_8("98", Format.ALPHANUMERIC_VARIABLE, 90),
+    COMPANY_INTERNAL_INFORMATION_9("99", Format.ALPHANUMERIC_VARIABLE, 90);
 
     private final String key;
     private final Format format;
