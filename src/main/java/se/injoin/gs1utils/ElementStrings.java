@@ -63,12 +63,12 @@ public class ElementStrings {
             return (BigDecimal) elementsByString.get(key);
         }
 
-        public List getList(ApplicationIdentifier identifier) {
-            return (List) elementsByEnum.get(identifier);
+        public List<?> getList(ApplicationIdentifier identifier) {
+            return (List<?>) elementsByEnum.get(identifier);
         }
 
-        public List getList(String key) {
-            return (List) elementsByString.get(key);
+        public List<?> getList(String key) {
+            return (List<?>) elementsByString.get(key);
         }
 
         public Object getObject(String key) {
@@ -98,6 +98,11 @@ public class ElementStrings {
         public Map<ApplicationIdentifier, Object> getElementsByEnum() {
             return elementsByEnum;
         }
+
+    }
+
+    public static ParseResult parse(String sequence) {
+        return parse(sequence, "\u001d");
     }
 
     /**
@@ -105,14 +110,18 @@ public class ElementStrings {
      * could be successfully parsed and an error string describing what went wrong and at what position in the sequence
      * the error occurred. The position reported is zero-based.
      */
-    public static ParseResult parse(String sequence) {
+    public static ParseResult parse(String sequence, String separator) {
 
         if (sequence == null) {
             throw new NullPointerException("Sequence must not be null");
         }
 
+        if (separator == null) {
+            separator = "\u001d";
+        }
+
         ParseResult result = new ParseResult();
-        SequenceReader reader = new SequenceReader(sequence);
+        SequenceReader reader = new SequenceReader(sequence, separator);
 
         while (!(reader.remainingLength() == 0)) {
 
@@ -122,21 +131,17 @@ public class ElementStrings {
             ApplicationIdentifier identifier = null;
 
             try {
-
                 // Standard AIs defined in ApplicationIdentifier
-                for (ApplicationIdentifier candidate : ApplicationIdentifier.values()) {
-                    if (reader.startsWith(candidate.getKey())) {
-                        identifier = candidate;
-                        key = reader.read(identifier.getKey().length());
-                        if (identifier.getFormat() == ApplicationIdentifier.Format.CUSTOM) {
-                            data = readDataFieldInCustomFormat(identifier, reader);
-                        } else {
-                            data = readDataFieldInStandardFormat(identifier, reader);
-                        }
-                        break;
+                identifier = ApplicationIdentifierTree.get(reader.peek());
+                if (identifier != null) {
+                    key = reader.read(identifier.getKey().length());
+                    if (identifier.getFormat() == ApplicationIdentifier.Format.CUSTOM) {
+                        data = readDataFieldInCustomFormat(identifier, reader);
+                    } else {
+                        data = readDataFieldInStandardFormat(identifier, reader);
                     }
                 }
-
+ 
                 // Support for AIs 703s Number of processor with three-digit ISO country code
                 if (key == null && reader.remainingLength() >= 4 && reader.startsWith("703")) {
                     String start = reader.peek(4);
@@ -154,16 +159,6 @@ public class ElementStrings {
                         data = reader.readVariableLengthAlphanumeric(1, 20);
                     }
                 }
-
-                // Support for AIs 91-99 Company internal information
-                if (key == null && reader.remainingLength() >= 2 && reader.startsWith("9")) {
-                    String start = reader.peek(2);
-                    if (start.charAt(1) >= '1' && start.charAt(1) <= '9') {
-                        key = reader.read(2);
-                        data = reader.readVariableLengthAlphanumeric(1, 30);
-                    }
-                }
-
             } catch (Exception e) {
                 result.partial = true;
                 result.errorMessage = "Error parsing data field for AI " + key + " at position " + identifierPosition + ", " + e.getMessage();
@@ -202,8 +197,9 @@ public class ElementStrings {
                 return reader.readDecimal(identifier.getMinLength(), identifier.getMaxLength());
             case DATE:
                 return reader.readDate();
+            default:
+                return null;
         }
-        return null;
     }
 
     private static Object readDataFieldInCustomFormat(ApplicationIdentifier identifier, SequenceReader reader) {
@@ -225,19 +221,42 @@ public class ElementStrings {
                 return reader.readDateOrDateRange();
             case PRODUCTION_DATE_AND_TIME:
                 return reader.readDateAndTimeWithOptionalMinutesAndSeconds();
+            default:
+                return null;
         }
-        return null;
     }
 
     static class SequenceReader {
 
-        private static final char SEPARATOR_CHAR = 0x1D;
+        private char[] separator;
 
         private String sequence;
         private int position = 0;
 
         SequenceReader(String sequence) {
+                this(sequence, "\u001d");
+        }
+        
+                SequenceReader(String sequence, String separator) {
             this.sequence = sequence;
+            this.separator = separator.toCharArray();
+        }
+        
+        boolean isSeparator(String sequence, int index) {
+                try {
+                        for (int i = 0; i < this.separator.length; i++) {
+                                if (this.separator[i] != sequence.charAt(index + i))
+                                        return false;
+                        }
+                        return true;
+                } catch (IndexOutOfBoundsException e) {
+                        return false;
+                }
+        }
+        
+        void skipSeparatorIfPresent() {
+                if (isSeparator(sequence, position))
+                        position += this.separator.length;
         }
 
         String readFixedLengthNumeric(int length) {
@@ -268,7 +287,7 @@ public class ElementStrings {
             }
         }
 
-        List readDateOrDateRange() {
+        List<?> readDateOrDateRange() {
             String dataField = readNumericDataField(6, 12);
             if (dataField.length() == 6) {
                 return Collections.singletonList(parseDateAndTime(dataField.substring(0, 6)));
@@ -368,7 +387,7 @@ public class ElementStrings {
             return decimalPointIndicator - '0';
         }
 
-        List readCurrencyAndAmount() {
+        List<?> readCurrencyAndAmount() {
             int decimalPointPosition = readDecimalPointPosition();
             String currencyCode = readNumericDataField(3, 3);
             String digits = readDataField(1, 15);
@@ -376,7 +395,7 @@ public class ElementStrings {
             return Arrays.asList(currencyCode, amount);
         }
 
-        List readCountryList() {
+        List<String> readCountryList() {
             String dataField = readNumericDataField(3, 15);
             if (dataField.length() % 3 != 0) {
                 throw new IllegalArgumentException("invalid data field length");
@@ -400,7 +419,7 @@ public class ElementStrings {
             int length = 0;
             int endIndex = position;
             while (length < maxLength && endIndex < sequence.length()) {
-                if (sequence.charAt(endIndex) == SEPARATOR_CHAR) {
+                if (isSeparator(sequence, endIndex)) {
                     break;
                 }
                 endIndex++;
@@ -415,12 +434,6 @@ public class ElementStrings {
             String dataField = sequence.substring(position, endIndex);
             position = endIndex;
             return dataField;
-        }
-
-        void skipSeparatorIfPresent() {
-            if (position < sequence.length() && sequence.charAt(position) == SEPARATOR_CHAR) {
-                position++;
-            }
         }
 
         int remainingLength() {
@@ -447,6 +460,10 @@ public class ElementStrings {
 
         String peek(int length) {
             return sequence.substring(position, position + length);
+        }
+        
+        String peek() {
+            return sequence.substring(position);
         }
     }
 }
