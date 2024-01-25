@@ -25,11 +25,16 @@ public class ElementStrings {
 
 	public static class ParseResult {
 
-		private boolean partial = false;
-		private String errorMessage = null;
+		private boolean partial;
+		private String errorMessage;
 
-		private Map<String, Object> elementsByString = new LinkedHashMap<String, Object>();
-		private Map<ApplicationIdentifier, Object> elementsByEnum = new LinkedHashMap<ApplicationIdentifier, Object>();
+		private final Map<String, Object> elementsByString;
+		private final Map<ApplicationIdentifier, Object> elementsByEnum;
+
+		public ParseResult() {
+			elementsByString = new LinkedHashMap<>();
+			elementsByEnum = new LinkedHashMap<>();
+		}
 
 		public boolean contains(String key) {
 			return elementsByString.containsKey(key);
@@ -63,12 +68,12 @@ public class ElementStrings {
 			return (BigDecimal) elementsByString.get(key);
 		}
 
-		public List getList(ApplicationIdentifier identifier) {
+		public List<?> getList(ApplicationIdentifier identifier) {
 			return (List) elementsByEnum.get(identifier);
 		}
 
-		public List getList(String key) {
-			return (List) elementsByString.get(key);
+		public List<?> getList(String key) {
+			return (List<?>) elementsByString.get(key);
 		}
 
 		public Object getObject(String key) {
@@ -195,21 +200,17 @@ public class ElementStrings {
 	}
 
 	private static Object readDataFieldInStandardFormat(ApplicationIdentifier identifier, SequenceReader reader) {
-		switch (identifier.getFormat()) {
-			case NUMERIC_FIXED:
-				return reader.readFixedLengthNumeric(identifier.getMaxLength());
-			case NUMERIC_VARIABLE:
-				return reader.readVariableLengthNumeric(identifier.getMinLength(), identifier.getMaxLength());
-			case ALPHANUMERIC_FIXED:
-				return reader.readFixedLengthAlphanumeric(identifier.getMaxLength());
-			case ALPHANUMERIC_VARIABLE:
-				return reader.readVariableLengthAlphanumeric(identifier.getMinLength(), identifier.getMaxLength());
-			case DECIMAL:
-				return reader.readDecimal(identifier.getMinLength(), identifier.getMaxLength());
-			case DATE:
-				return reader.readDate();
-		}
-		return null;
+		return switch (identifier.getFormat()) {
+			case NUMERIC_FIXED -> reader.readFixedLengthNumeric(identifier.getMaxLength());
+			case NUMERIC_VARIABLE ->
+					reader.readVariableLengthNumeric(identifier.getMinLength(), identifier.getMaxLength());
+			case ALPHANUMERIC_FIXED -> reader.readFixedLengthAlphanumeric(identifier.getMaxLength());
+			case ALPHANUMERIC_VARIABLE ->
+					reader.readVariableLengthAlphanumeric(identifier.getMinLength(), identifier.getMaxLength());
+			case DECIMAL -> reader.readDecimal(identifier.getMinLength(), identifier.getMaxLength());
+			case DATE -> reader.readDate();
+			default -> null;
+		};
 	}
 
 	private static Object readDataFieldInCustomFormat(ApplicationIdentifier identifier, SequenceReader reader) {
@@ -238,8 +239,9 @@ public class ElementStrings {
 	static class SequenceReader {
 
 		private static final char SEPARATOR_CHAR = 0x1D;
+		private static final String SEPARATOR_SEQUENCE = "\\x1D";
 
-		private String sequence;
+		private final String sequence;
 		private int position = 0;
 
 		SequenceReader(String sequence) {
@@ -274,7 +276,7 @@ public class ElementStrings {
 			}
 		}
 
-		List readDateOrDateRange() {
+		List<Date> readDateOrDateRange() {
 			String dataField = readNumericDataField(6, 12);
 			if (dataField.length() == 6) {
 				return Collections.singletonList(parseDateAndTime(dataField.substring(0, 6)));
@@ -374,7 +376,7 @@ public class ElementStrings {
 			return decimalPointIndicator - '0';
 		}
 
-		List readCurrencyAndAmount() {
+		List<?> readCurrencyAndAmount() {
 			int decimalPointPosition = readDecimalPointPosition();
 			String currencyCode = readNumericDataField(3, 3);
 			String digits = readDataField(1, 15);
@@ -382,12 +384,12 @@ public class ElementStrings {
 			return Arrays.asList(currencyCode, amount);
 		}
 
-		List readCountryList() {
+		List<String> readCountryList() {
 			String dataField = readNumericDataField(3, 15);
 			if (dataField.length() % 3 != 0) {
 				throw new IllegalArgumentException("invalid data field length");
 			}
-			ArrayList<String> list = new ArrayList<String>();
+			ArrayList<String> list = new ArrayList<>();
 			for (int i = 0; i < dataField.length(); i += 3) {
 				list.add(dataField.substring(i, i + 3));
 			}
@@ -406,7 +408,9 @@ public class ElementStrings {
 			int length = 0;
 			int endIndex = position;
 			while (length < maxLength && endIndex < sequence.length()) {
-				if (sequence.charAt(endIndex) == SEPARATOR_CHAR) {
+				if (sequence.charAt(endIndex) == SEPARATOR_CHAR || this.sequence
+						.substring(endIndex)
+						.startsWith(SEPARATOR_SEQUENCE)) {
 					break;
 				}
 				endIndex++;
@@ -426,6 +430,11 @@ public class ElementStrings {
 		void skipSeparatorIfPresent() {
 			if (position < sequence.length() && sequence.charAt(position) == SEPARATOR_CHAR) {
 				position++;
+			}
+			if ((position + SEPARATOR_SEQUENCE.length()) < sequence.length() && sequence
+					.substring(position)
+					.startsWith(SEPARATOR_SEQUENCE)) {
+				position += SEPARATOR_SEQUENCE.length();
 			}
 		}
 
