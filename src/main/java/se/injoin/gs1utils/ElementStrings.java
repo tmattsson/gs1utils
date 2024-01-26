@@ -23,430 +23,445 @@ import java.util.*;
  */
 public class ElementStrings {
 
-    public static class ParseResult {
+	public static class ParseResult {
 
-        private boolean partial = false;
-        private String errorMessage = null;
+		private boolean partial;
+		private String errorMessage;
 
-        private Map<String, Object> elementsByString = new LinkedHashMap<String, Object>();
-        private Map<ApplicationIdentifier, Object> elementsByEnum = new LinkedHashMap<ApplicationIdentifier, Object>();
+		private final Map<String, Object> elementsByString;
+		private final Map<ApplicationIdentifier, Object> elementsByEnum;
 
-        public boolean contains(String key) {
-            return elementsByString.containsKey(key);
-        }
+		public ParseResult() {
+			elementsByString = new LinkedHashMap<>();
+			elementsByEnum = new LinkedHashMap<>();
+		}
 
-        public boolean contains(ApplicationIdentifier identifier) {
-            return elementsByEnum.containsKey(identifier);
-        }
+		public boolean contains(String key) {
+			return elementsByString.containsKey(key);
+		}
 
-        public String getString(ApplicationIdentifier identifier) {
-            return (String) elementsByEnum.get(identifier);
-        }
+		public boolean contains(ApplicationIdentifier identifier) {
+			return elementsByEnum.containsKey(identifier);
+		}
 
-        public String getString(String key) {
-            return (String) elementsByString.get(key);
-        }
+		public String getString(ApplicationIdentifier identifier) {
+			return (String) elementsByEnum.get(identifier);
+		}
 
-        public Date getDate(ApplicationIdentifier identifier) {
-            return (Date) elementsByEnum.get(identifier);
-        }
+		public String getString(String key) {
+			return (String) elementsByString.get(key);
+		}
 
-        public Date getDate(String key) {
-            return (Date) elementsByString.get(key);
-        }
+		public Date getDate(ApplicationIdentifier identifier) {
+			return (Date) elementsByEnum.get(identifier);
+		}
 
-        public BigDecimal getDecimal(ApplicationIdentifier identifier) {
-            return (BigDecimal) elementsByEnum.get(identifier);
-        }
+		public Date getDate(String key) {
+			return (Date) elementsByString.get(key);
+		}
 
-        public BigDecimal getDecimal(String key) {
-            return (BigDecimal) elementsByString.get(key);
-        }
+		public BigDecimal getDecimal(ApplicationIdentifier identifier) {
+			return (BigDecimal) elementsByEnum.get(identifier);
+		}
 
-        public List getList(ApplicationIdentifier identifier) {
-            return (List) elementsByEnum.get(identifier);
-        }
+		public BigDecimal getDecimal(String key) {
+			return (BigDecimal) elementsByString.get(key);
+		}
 
-        public List getList(String key) {
-            return (List) elementsByString.get(key);
-        }
+		public List<?> getList(ApplicationIdentifier identifier) {
+			return (List) elementsByEnum.get(identifier);
+		}
 
-        public Object getObject(String key) {
-            return elementsByString.get(key);
-        }
+		public List<?> getList(String key) {
+			return (List<?>) elementsByString.get(key);
+		}
 
-        public Object getObject(ApplicationIdentifier identifier) {
-            return elementsByEnum.get(identifier);
-        }
+		public Object getObject(String key) {
+			return elementsByString.get(key);
+		}
 
-        public boolean isEmpty() {
-            return elementsByString.isEmpty();
-        }
+		public Object getObject(ApplicationIdentifier identifier) {
+			return elementsByEnum.get(identifier);
+		}
 
-        public boolean isPartial() {
-            return partial;
-        }
+		public boolean isEmpty() {
+			return elementsByString.isEmpty();
+		}
 
-        public String getErrorMessage() {
-            return errorMessage;
-        }
+		public boolean isPartial() {
+			return partial;
+		}
 
-        public Map<String, Object> getElementsByString() {
-            return elementsByString;
-        }
+		public String getErrorMessage() {
+			return errorMessage;
+		}
 
-        public Map<ApplicationIdentifier, Object> getElementsByEnum() {
-            return elementsByEnum;
-        }
-    }
+		public Map<String, Object> getElementsByString() {
+			return elementsByString;
+		}
 
-    /**
-     * Parses an element strings and returns a parse result. On error returns a partial parse result containing what
-     * could be successfully parsed and an error string describing what went wrong and at what position in the sequence
-     * the error occurred. The position reported is zero-based.
-     */
-    public static ParseResult parse(String sequence) {
+		public Map<ApplicationIdentifier, Object> getElementsByEnum() {
+			return elementsByEnum;
+		}
+	}
 
-        if (sequence == null) {
-            throw new NullPointerException("Sequence must not be null");
-        }
+	/**
+	 * Parses an element strings and returns a parse result. On error returns a partial parse result containing what
+	 * could be successfully parsed and an error string describing what went wrong and at what position in the sequence
+	 * the error occurred. The position reported is zero-based.
+	 */
+	public static ParseResult parse(String sequence) {
 
-        ParseResult result = new ParseResult();
-        SequenceReader reader = new SequenceReader(sequence);
+		if (sequence == null) {
+			throw new NullPointerException("Sequence must not be null");
+		}
 
-        while (!(reader.remainingLength() == 0)) {
+		ParseResult result = new ParseResult();
+		SequenceReader reader = new SequenceReader(sequence);
 
-            int identifierPosition = reader.getPosition();
-            String key = null;
-            Object data = null;
-            ApplicationIdentifier identifier = null;
+		while (!(reader.remainingLength() == 0)) {
 
-            try {
+			int identifierPosition = reader.getPosition();
+			String key = null;
+			Object data = null;
+			ApplicationIdentifier identifier = null;
 
-                // Standard AIs defined in ApplicationIdentifier
-                for (ApplicationIdentifier candidate : ApplicationIdentifier.values()) {
-                    if (reader.startsWith(candidate.getKey())) {
-                        identifier = candidate;
-                        key = reader.read(identifier.getKey().length());
-                        if (identifier.getFormat() == ApplicationIdentifier.Format.CUSTOM) {
-                            data = readDataFieldInCustomFormat(identifier, reader);
-                        } else {
-                            data = readDataFieldInStandardFormat(identifier, reader);
-                        }
-                        break;
-                    }
-                }
+			try {
 
-                // Support for AIs 703s Number of processor with three-digit ISO country code
-                if (key == null && reader.remainingLength() >= 4 && reader.startsWith("703")) {
-                    String start = reader.peek(4);
-                    if (start.charAt(3) >= '0' && start.charAt(3) <= '9') {
-                        key = reader.read(4);
-                        data = Arrays.asList(reader.readFixedLengthNumeric(3), reader.readVariableLengthAlphanumeric(1, 27));
-                    }
-                }
+				// Standard AIs defined in ApplicationIdentifier
+				for (ApplicationIdentifier candidate : ApplicationIdentifier.values()) {
+					if (reader.startsWith(candidate.getKey())) {
+						identifier = candidate;
+						key = reader.read(identifier.getKey().length());
+						if (identifier.getFormat() == ApplicationIdentifier.Format.CUSTOM) {
+							data = readDataFieldInCustomFormat(identifier, reader);
+						} else {
+							data = readDataFieldInStandardFormat(identifier, reader);
+						}
+						break;
+					}
+				}
 
-                // Support for AIs 710-719 National Healthcare Reimbursement Number (NHRN)
-                if (key == null && reader.remainingLength() >= 3 && reader.startsWith("71")) {
-                    String start = reader.peek(3);
-                    if (start.charAt(2) >= '0' && start.charAt(2) <= '9') {
-                        key = reader.read(3);
-                        data = reader.readVariableLengthAlphanumeric(1, 20);
-                    }
-                }
+				// Support for AIs 703s Number of processor with three-digit ISO country code
+				if (key == null && reader.remainingLength() >= 4 && reader.startsWith("703")) {
+					String start = reader.peek(4);
+					if (start.charAt(3) >= '0' && start.charAt(3) <= '9') {
+						key = reader.read(4);
+						data = Arrays.asList(reader.readFixedLengthNumeric(3),
+								reader.readVariableLengthAlphanumeric(1, 27));
+					}
+				}
 
-                // Support for AIs 91-99 Company internal information
-                if (key == null && reader.remainingLength() >= 2 && reader.startsWith("9")) {
-                    String start = reader.peek(2);
-                    if (start.charAt(1) >= '1' && start.charAt(1) <= '9') {
-                        key = reader.read(2);
-                        data = reader.readVariableLengthAlphanumeric(1, 30);
-                    }
-                }
+				// Support for AIs 710-719 National Healthcare Reimbursement Number (NHRN)
+				if (key == null && reader.remainingLength() >= 3 && reader.startsWith("71")) {
+					String start = reader.peek(3);
+					if (start.charAt(2) >= '0' && start.charAt(2) <= '9') {
+						key = reader.read(3);
+						data = reader.readVariableLengthAlphanumeric(1, 20);
+					}
+				}
 
-            } catch (Exception e) {
-                result.partial = true;
-                result.errorMessage = "Error parsing data field for AI " + key + " at position " + identifierPosition + ", " + e.getMessage();
-                break;
-            }
-            if (key == null) {
-                result.partial = true;
-                result.errorMessage = "Unrecognized AI at position " + identifierPosition;
-                break;
-            }
-            if (data == null) {
-                result.partial = true;
-                result.errorMessage = "Error parsing data field for AI " + key + " at position " + identifierPosition;
-                break;
-            }
-            result.elementsByString.put(key, data);
-            if (identifier != null) {
-                result.elementsByEnum.put(identifier, data);
-            }
-        }
+				// Support for AIs 91-99 Company internal information
+				if (key == null && reader.remainingLength() >= 2 && reader.startsWith("9")) {
+					String start = reader.peek(2);
+					if (start.charAt(1) >= '1' && start.charAt(1) <= '9') {
+						key = reader.read(2);
+						data = reader.readVariableLengthAlphanumeric(1, 30);
+					}
+				}
 
-        return result;
-    }
+			} catch (Exception e) {
+				result.partial = true;
+				result.errorMessage = "Error parsing data field for AI "
+						+ key
+						+ " at position "
+						+ identifierPosition
+						+ ", "
+						+ e.getMessage();
+				break;
+			}
+			if (key == null) {
+				result.partial = true;
+				result.errorMessage = "Unrecognized AI at position " + identifierPosition;
+				break;
+			}
+			if (data == null) {
+				result.partial = true;
+				result.errorMessage = "Error parsing data field for AI " + key + " at position " + identifierPosition;
+				break;
+			}
+			result.elementsByString.put(key, data);
+			if (identifier != null) {
+				result.elementsByEnum.put(identifier, data);
+			}
+		}
 
-    private static Object readDataFieldInStandardFormat(ApplicationIdentifier identifier, SequenceReader reader) {
-        switch (identifier.getFormat()) {
-            case NUMERIC_FIXED:
-                return reader.readFixedLengthNumeric(identifier.getMaxLength());
-            case NUMERIC_VARIABLE:
-                return reader.readVariableLengthNumeric(identifier.getMinLength(), identifier.getMaxLength());
-            case ALPHANUMERIC_FIXED:
-                return reader.readFixedLengthAlphanumeric(identifier.getMaxLength());
-            case ALPHANUMERIC_VARIABLE:
-                return reader.readVariableLengthAlphanumeric(identifier.getMinLength(), identifier.getMaxLength());
-            case DECIMAL:
-                return reader.readDecimal(identifier.getMinLength(), identifier.getMaxLength());
-            case DATE:
-                return reader.readDate();
-        }
-        return null;
-    }
+		return result;
+	}
 
-    private static Object readDataFieldInCustomFormat(ApplicationIdentifier identifier, SequenceReader reader) {
-        switch (identifier) {
-            case AMOUNT_PAYABLE_WITH_CURRENCY:
-            case AMOUNT_PAYABLE_PER_SINGLE_ITEM_WITH_CURRENCY:
-                return reader.readCurrencyAndAmount();
-            case SHIP_TO_POSTAL_CODE_WITH_COUNTRY: {
-                String countryCode = reader.readNumericDataField(3, 3);
-                String postalCode = reader.readDataField(1, 9);
-                return Arrays.asList(countryCode, postalCode);
-            }
-            case COUNTRY_OF_INITIAL_PROCESSING:
-            case COUNTRY_OF_DISASSEMBLY:
-                return reader.readCountryList();
-            case EXPIRATION_DATE_AND_TIME:
-                return reader.readDateAndTimeWithoutSeconds();
-            case HARVEST_DATE:
-                return reader.readDateOrDateRange();
-            case PRODUCTION_DATE_AND_TIME:
-                return reader.readDateAndTimeWithOptionalMinutesAndSeconds();
-        }
-        return null;
-    }
+	private static Object readDataFieldInStandardFormat(ApplicationIdentifier identifier, SequenceReader reader) {
+		return switch (identifier.getFormat()) {
+			case NUMERIC_FIXED -> reader.readFixedLengthNumeric(identifier.getMaxLength());
+			case NUMERIC_VARIABLE ->
+					reader.readVariableLengthNumeric(identifier.getMinLength(), identifier.getMaxLength());
+			case ALPHANUMERIC_FIXED -> reader.readFixedLengthAlphanumeric(identifier.getMaxLength());
+			case ALPHANUMERIC_VARIABLE ->
+					reader.readVariableLengthAlphanumeric(identifier.getMinLength(), identifier.getMaxLength());
+			case DECIMAL -> reader.readDecimal(identifier.getMinLength(), identifier.getMaxLength());
+			case DATE -> reader.readDate();
+			default -> null;
+		};
+	}
 
-    static class SequenceReader {
+	private static Object readDataFieldInCustomFormat(ApplicationIdentifier identifier, SequenceReader reader) {
+		switch (identifier) {
+			case AMOUNT_PAYABLE_WITH_CURRENCY:
+			case AMOUNT_PAYABLE_PER_SINGLE_ITEM_WITH_CURRENCY:
+				return reader.readCurrencyAndAmount();
+			case SHIP_TO_POSTAL_CODE_WITH_COUNTRY: {
+				String countryCode = reader.readNumericDataField(3, 3);
+				String postalCode = reader.readDataField(1, 9);
+				return Arrays.asList(countryCode, postalCode);
+			}
+			case COUNTRY_OF_INITIAL_PROCESSING:
+			case COUNTRY_OF_DISASSEMBLY:
+				return reader.readCountryList();
+			case EXPIRATION_DATE_AND_TIME:
+				return reader.readDateAndTimeWithoutSeconds();
+			case HARVEST_DATE:
+				return reader.readDateOrDateRange();
+			case PRODUCTION_DATE_AND_TIME:
+				return reader.readDateAndTimeWithOptionalMinutesAndSeconds();
+		}
+		return null;
+	}
 
-        private static final char SEPARATOR_CHAR = 0x1D;
+	static class SequenceReader {
 
-        private String sequence;
-        private int position = 0;
+		private static final char SEPARATOR_CHAR = 0x1D;
+		private static final String SEPARATOR_SEQUENCE = "\\x1D";
 
-        SequenceReader(String sequence) {
-            this.sequence = sequence;
-        }
+		private final String sequence;
+		private int position = 0;
 
-        String readFixedLengthNumeric(int length) {
-            return readVariableLengthNumeric(length, length);
-        }
+		SequenceReader(String sequence) {
+			this.sequence = sequence;
+		}
 
-        String readVariableLengthNumeric(int minLength, int maxLength) {
-            String dataField = readNumericDataField(minLength, maxLength);
-            skipSeparatorIfPresent();
-            return dataField;
-        }
+		String readFixedLengthNumeric(int length) {
+			return readVariableLengthNumeric(length, length);
+		}
 
-        String readFixedLengthAlphanumeric(int length) {
-            return readVariableLengthAlphanumeric(length, length);
-        }
+		String readVariableLengthNumeric(int minLength, int maxLength) {
+			String dataField = readNumericDataField(minLength, maxLength);
+			skipSeparatorIfPresent();
+			return dataField;
+		}
 
-        String readVariableLengthAlphanumeric(int minLength, int maxLength) {
-            String dataField = readDataField(minLength, maxLength);
-            skipSeparatorIfPresent();
-            return dataField;
-        }
+		String readFixedLengthAlphanumeric(int length) {
+			return readVariableLengthAlphanumeric(length, length);
+		}
 
-        Date readDate() {
-            try {
-                return parseDateAndTime(readNumericDataField(6, 6));
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("data field must be numeric");
-            }
-        }
+		String readVariableLengthAlphanumeric(int minLength, int maxLength) {
+			String dataField = readDataField(minLength, maxLength);
+			skipSeparatorIfPresent();
+			return dataField;
+		}
 
-        List readDateOrDateRange() {
-            String dataField = readNumericDataField(6, 12);
-            if (dataField.length() == 6) {
-                return Collections.singletonList(parseDateAndTime(dataField.substring(0, 6)));
-            } else if (dataField.length() == 12) {
-                Date first = parseDateAndTime(dataField.substring(0, 6));
-                Date second = parseDateAndTime(dataField.substring(6, 12));
-                return Arrays.asList(first, second);
-            }
-            throw new IllegalArgumentException("invalid data field length");
-        }
+		Date readDate() {
+			try {
+				return parseDateAndTime(readNumericDataField(6, 6));
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("data field must be numeric");
+			}
+		}
 
-        Date readDateAndTimeWithoutSeconds() {
-            try {
-                return parseDateAndTime(readNumericDataField(10, 10));
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("data field must be numeric");
-            }
-        }
+		List<Date> readDateOrDateRange() {
+			String dataField = readNumericDataField(6, 12);
+			if (dataField.length() == 6) {
+				return Collections.singletonList(parseDateAndTime(dataField.substring(0, 6)));
+			} else if (dataField.length() == 12) {
+				Date first = parseDateAndTime(dataField.substring(0, 6));
+				Date second = parseDateAndTime(dataField.substring(6, 12));
+				return Arrays.asList(first, second);
+			}
+			throw new IllegalArgumentException("invalid data field length");
+		}
 
-        Date readDateAndTimeWithOptionalMinutesAndSeconds() {
-            try {
-                String dataField = readNumericDataField(8, 12);
-                if (dataField.length() != 8 && dataField.length() != 12) {
-                    throw new IllegalArgumentException("invalid data field length");
-                }
-                return parseDateAndTime(dataField);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("data field must be numeric");
-            }
-        }
+		Date readDateAndTimeWithoutSeconds() {
+			try {
+				return parseDateAndTime(readNumericDataField(10, 10));
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("data field must be numeric");
+			}
+		}
 
-        Date parseDateAndTime(String s) {
-            int year, month, day, hour, minutes, seconds;
-            try {
-                year = Integer.parseInt(s.substring(0, 2));
-                month = Integer.parseInt(s.substring(2, 4));
-                day = Integer.parseInt(s.substring(4, 6));
-                hour = s.length() >= 8 ? Integer.parseInt(s.substring(6, 8)) : 0;
-                minutes = s.length() >= 10 ? Integer.parseInt(s.substring(8, 10)) : 0;
-                seconds = s.length() >= 12 ? Integer.parseInt(s.substring(10, 12)) : 0;
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("data field must be numeric");
-            }
-            try {
-                Calendar calendar = Calendar.getInstance();
-                year = resolveTwoDigitYear(year, calendar.get(Calendar.YEAR));
-                // When day is zero that means last day of the month
-                boolean lastOfMonth = day == 0;
-                day = day == 0 ? 1 : day;
-                calendar.clear();
-                calendar.setLenient(false);
-                calendar.set(year, month - 1, day, hour, minutes, seconds);
-                if (lastOfMonth) {
-                    calendar.add(Calendar.MONTH, 1);
-                    calendar.add(Calendar.DAY_OF_MONTH, -1);
-                }
-                return calendar.getTime();
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("invalid date");
-            }
-        }
+		Date readDateAndTimeWithOptionalMinutesAndSeconds() {
+			try {
+				String dataField = readNumericDataField(8, 12);
+				if (dataField.length() != 8 && dataField.length() != 12) {
+					throw new IllegalArgumentException("invalid data field length");
+				}
+				return parseDateAndTime(dataField);
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("data field must be numeric");
+			}
+		}
 
-        /**
-         * Converts a two digit year to four digits using the algorithm in GS1 General specification section 7.12.
-         *
-         * @param year        two digit year
-         * @param currentYear four digit century and year
-         */
-        int resolveTwoDigitYear(int year, int currentYear) {
-            int century = currentYear - (currentYear % 100);
-            int difference = year - (currentYear % 100);
-            if (difference >= 51 && difference <= 99) {
-                century -= 100;
-            } else if (difference >= -99 && difference <= -50) {
-                century += 100;
-            }
-            return century + year;
-        }
+		Date parseDateAndTime(String s) {
+			int year, month, day, hour, minutes, seconds;
+			try {
+				year = Integer.parseInt(s.substring(0, 2));
+				month = Integer.parseInt(s.substring(2, 4));
+				day = Integer.parseInt(s.substring(4, 6));
+				hour = s.length() >= 8 ? Integer.parseInt(s.substring(6, 8)) : 0;
+				minutes = s.length() >= 10 ? Integer.parseInt(s.substring(8, 10)) : 0;
+				seconds = s.length() >= 12 ? Integer.parseInt(s.substring(10, 12)) : 0;
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("data field must be numeric");
+			}
+			try {
+				Calendar calendar = Calendar.getInstance();
+				year = resolveTwoDigitYear(year, calendar.get(Calendar.YEAR));
+				// When day is zero that means last day of the month
+				boolean lastOfMonth = day == 0;
+				day = day == 0 ? 1 : day;
+				calendar.clear();
+				calendar.setLenient(false);
+				calendar.set(year, month - 1, day, hour, minutes, seconds);
+				if (lastOfMonth) {
+					calendar.add(Calendar.MONTH, 1);
+					calendar.add(Calendar.DAY_OF_MONTH, -1);
+				}
+				return calendar.getTime();
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("invalid date");
+			}
+		}
 
-        BigDecimal readDecimal(int minLength, int maxLength) {
-            try {
-                int decimalPointPosition = readDecimalPointPosition();
-                String dataField = readNumericDataField(minLength, maxLength);
-                return new BigDecimal(dataField).movePointLeft(decimalPointPosition);
-            } catch (ArithmeticException e) {
-                throw new IllegalArgumentException("invalid decimal");
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("data field must be numeric");
-            }
-        }
+		/**
+		 * Converts a two digit year to four digits using the algorithm in GS1 General specification section 7.12.
+		 *
+		 * @param year        two digit year
+		 * @param currentYear four digit century and year
+		 */
+		int resolveTwoDigitYear(int year, int currentYear) {
+			int century = currentYear - (currentYear % 100);
+			int difference = year - (currentYear % 100);
+			if (difference >= 51 && difference <= 99) {
+				century -= 100;
+			} else if (difference >= -99 && difference <= -50) {
+				century += 100;
+			}
+			return century + year;
+		}
 
-        int readDecimalPointPosition() {
-            char decimalPointIndicator = readChar();
-            if (decimalPointIndicator < '0' || decimalPointIndicator > '9') {
-                throw new IllegalArgumentException("decimal point indicator must be a digit");
-            }
-            return decimalPointIndicator - '0';
-        }
+		BigDecimal readDecimal(int minLength, int maxLength) {
+			try {
+				int decimalPointPosition = readDecimalPointPosition();
+				String dataField = readNumericDataField(minLength, maxLength);
+				return new BigDecimal(dataField).movePointLeft(decimalPointPosition);
+			} catch (ArithmeticException e) {
+				throw new IllegalArgumentException("invalid decimal");
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("data field must be numeric");
+			}
+		}
 
-        List readCurrencyAndAmount() {
-            int decimalPointPosition = readDecimalPointPosition();
-            String currencyCode = readNumericDataField(3, 3);
-            String digits = readDataField(1, 15);
-            BigDecimal amount = new BigDecimal(digits).movePointLeft(decimalPointPosition);
-            return Arrays.asList(currencyCode, amount);
-        }
+		int readDecimalPointPosition() {
+			char decimalPointIndicator = readChar();
+			if (decimalPointIndicator < '0' || decimalPointIndicator > '9') {
+				throw new IllegalArgumentException("decimal point indicator must be a digit");
+			}
+			return decimalPointIndicator - '0';
+		}
 
-        List readCountryList() {
-            String dataField = readNumericDataField(3, 15);
-            if (dataField.length() % 3 != 0) {
-                throw new IllegalArgumentException("invalid data field length");
-            }
-            ArrayList<String> list = new ArrayList<String>();
-            for (int i = 0; i < dataField.length(); i += 3) {
-                list.add(dataField.substring(i, i + 3));
-            }
-            return list;
-        }
+		List<?> readCurrencyAndAmount() {
+			int decimalPointPosition = readDecimalPointPosition();
+			String currencyCode = readNumericDataField(3, 3);
+			String digits = readDataField(1, 15);
+			BigDecimal amount = new BigDecimal(digits).movePointLeft(decimalPointPosition);
+			return Arrays.asList(currencyCode, amount);
+		}
 
-        String readNumericDataField(int minLength, int maxLength) {
-            String dataField = readDataField(minLength, maxLength);
-            if (!Internals.isDigits(dataField)) {
-                throw new IllegalArgumentException("data field must be numeric");
-            }
-            return dataField;
-        }
+		List<String> readCountryList() {
+			String dataField = readNumericDataField(3, 15);
+			if (dataField.length() % 3 != 0) {
+				throw new IllegalArgumentException("invalid data field length");
+			}
+			ArrayList<String> list = new ArrayList<>();
+			for (int i = 0; i < dataField.length(); i += 3) {
+				list.add(dataField.substring(i, i + 3));
+			}
+			return list;
+		}
 
-        String readDataField(int minLength, int maxLength) {
-            int length = 0;
-            int endIndex = position;
-            while (length < maxLength && endIndex < sequence.length()) {
-                if (sequence.charAt(endIndex) == SEPARATOR_CHAR) {
-                    break;
-                }
-                endIndex++;
-                length++;
-            }
-            if (length < minLength && minLength == maxLength) {
-                throw new IllegalArgumentException("data field must be exactly " + minLength + " characters long");
-            }
-            if (length < minLength) {
-                throw new IllegalArgumentException("data field must be at least " + minLength + " characters long");
-            }
-            String dataField = sequence.substring(position, endIndex);
-            position = endIndex;
-            return dataField;
-        }
+		String readNumericDataField(int minLength, int maxLength) {
+			String dataField = readDataField(minLength, maxLength);
+			if (!Internals.isDigits(dataField)) {
+				throw new IllegalArgumentException("data field must be numeric");
+			}
+			return dataField;
+		}
 
-        void skipSeparatorIfPresent() {
-            if (position < sequence.length() && sequence.charAt(position) == SEPARATOR_CHAR) {
-                position++;
-            }
-        }
+		String readDataField(int minLength, int maxLength) {
+			int length = 0;
+			int endIndex = position;
+			while (length < maxLength && endIndex < sequence.length()) {
+				if (sequence.charAt(endIndex) == SEPARATOR_CHAR || this.sequence
+						.substring(endIndex)
+						.startsWith(SEPARATOR_SEQUENCE)) {
+					break;
+				}
+				endIndex++;
+				length++;
+			}
+			if (length < minLength && minLength == maxLength) {
+				throw new IllegalArgumentException("data field must be exactly " + minLength + " characters long");
+			}
+			if (length < minLength) {
+				throw new IllegalArgumentException("data field must be at least " + minLength + " characters long");
+			}
+			String dataField = sequence.substring(position, endIndex);
+			position = endIndex;
+			return dataField;
+		}
 
-        int remainingLength() {
-            return sequence.length() - position;
-        }
+		void skipSeparatorIfPresent() {
+			if (position < sequence.length() && sequence.charAt(position) == SEPARATOR_CHAR) {
+				position++;
+			}
+			if ((position + SEPARATOR_SEQUENCE.length()) < sequence.length() && sequence
+					.substring(position)
+					.startsWith(SEPARATOR_SEQUENCE)) {
+				position += SEPARATOR_SEQUENCE.length();
+			}
+		}
 
-        int getPosition() {
-            return position;
-        }
+		int remainingLength() {
+			return sequence.length() - position;
+		}
 
-        boolean startsWith(String prefix) {
-            return sequence.startsWith(prefix, position);
-        }
+		int getPosition() {
+			return position;
+		}
 
-        char readChar() {
-            return sequence.charAt(position++);
-        }
+		boolean startsWith(String prefix) {
+			return sequence.startsWith(prefix, position);
+		}
 
-        String read(int length) {
-            String s = peek(length);
-            position += length;
-            return s;
-        }
+		char readChar() {
+			return sequence.charAt(position++);
+		}
 
-        String peek(int length) {
-            return sequence.substring(position, position + length);
-        }
-    }
+		String read(int length) {
+			String s = peek(length);
+			position += length;
+			return s;
+		}
+
+		String peek(int length) {
+			return sequence.substring(position, position + length);
+		}
+	}
 }
