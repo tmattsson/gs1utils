@@ -204,6 +204,22 @@ public final class GTIN {
     }
 
     /**
+     * Converts a UPC-E to its GTIN-12 form.
+     *
+     * @throws IllegalArgumentException if the input string is not a GTIN or a GTIN-14 or GTIN-13 without leading zeros
+     */
+    public static String fromUPC_EToGTIN12(String gtin) {
+        if (gtin == null) {
+            return null;
+        }
+        validateFormat(gtin);
+        if (gtin.length() > 8) {
+            throw new IllegalArgumentException("GTIN " + gtin + " could not be converted to GTIN-12");
+        }
+        return convertGTIN8ToGTIN12(gtin);
+    }
+
+    /**
      * Converts a GTIN to its GTIN-8 form.
      *
      * @throws IllegalArgumentException if the input string is not a GTIN or a GTIN-14, GTIN-13 or GTIN-12 without leading zeros
@@ -429,5 +445,33 @@ public final class GTIN {
         if (gtin.length() != 14 && gtin.length() != 13) {
             throw new IllegalArgumentException("Invalid GTIN " + gtin + ", must be 13 or 14 digits long");
         }
+    }
+
+    private static String convertGTIN8ToGTIN12(String gtin) {
+        switch (gtin.charAt(6)) {
+            case '0':
+            case '1':
+            case '2': {
+                gtin = gtin.substring(0, 3) + "0000" + gtin.charAt(6) + gtin.substring(3, 6) + gtin.charAt(7);
+                break;
+            }
+            case '3': {
+                gtin = gtin.substring(0, 4) + "00000" + gtin.substring(4, 5) + gtin.charAt(7);
+                break;
+            }
+            case '4': {
+                gtin = gtin.substring(0, 5) + "00000" + gtin.charAt(5) + gtin.charAt(7);
+                break;
+            }
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9': {
+                gtin = gtin.substring(0, 6) + "0000" + gtin.charAt(6) + gtin.charAt(7);
+                break;
+            }
+        }
+        return gtin;
     }
 }

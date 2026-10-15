@@ -32,10 +32,11 @@ GTIN.validateFormatAndCheckDigit("12345678") // throws exception if format or ch
 
 ```java
 // Conversion
-GTIN.toGTIN14("12345678")
-GTIN.toGTIN13("12345678")
-GTIN.toGTIN12("12345678")
+GTIN.toGTIN14("12345678") // doesn't work for GTIN-8 - see GTIN.fromGTIN8ToGTIN12(GTIN8)
+GTIN.toGTIN13("12345678") // doesn't work for GTIN-8 - see GTIN.fromGTIN8ToGTIN12(GTIN8)
+GTIN.toGTIN12("12345678") // doesn't work for GTIN-8 - see GTIN.fromGTIN8ToGTIN12(GTIN8)
 GTIN.toGTIN8("12345678")
+GTIN.fromGTIN8ToGTIN12("07838604") // <--- Use this to convert from GTIN-8 to GTIN-12
 GTIN.convertibleToGTIN14("12345678")
 GTIN.convertibleToGTIN13("12345678")
 GTIN.convertibleToGTIN12("12345678")
